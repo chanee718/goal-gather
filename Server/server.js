@@ -6,10 +6,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const db = mysql.createConnection({
-  host: 'localhost',
+  host: '172.10.7.58',
   user: 'root',
-  password: '[tmdcks03]',
-  database: 'example'
+  password: '13818ea710D1@',
+  database: 'example',
+  port: 80
 });
 
 db.connect((err) => {

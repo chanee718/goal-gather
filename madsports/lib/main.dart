@@ -32,9 +32,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  static const baseUrl = 'http://143.248.228.117:3000/users';
   int _counter = 0;
-  String test = '3000';
 
   void _incrementCounter() {
     setState(() {
@@ -43,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _fetch() async {
-    final url = Uri.parse('$baseUrl?test=$test');
+    final url = Uri.parse('http://172.10.7.43:80/users');
     try {
       var res = await http.get(url);
       if (res.statusCode == 200) {
