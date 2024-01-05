@@ -32,7 +32,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  static const baseUrl = 'http://143.248.228.117:3000/users';
   int _counter = 0;
+  String test = '3000';
 
   void _incrementCounter() {
     setState(() {
@@ -40,13 +42,19 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _fetchData() async {
-    final response = await http.get(Uri.parse('http://localhost:3000'));
-    if (response.statusCode == 200) {
-      var data = json.decode(response.body);
-      print("data: $data");
-    } else {
-      print('서버로부터 데이터를 가져오는 데 오류가 발생했습니다.');
+  _fetch() async {
+    final url = Uri.parse('$baseUrl?test=$test');
+    try {
+      var res = await http.get(url);
+      if (res.statusCode == 200) {
+        var data = json.decode(res.body);
+        print("data: $data");
+      } else {
+        print('서버로부터 데이터를 가져오는 데 오류가 발생했습니다.');
+      }
+      // 성공적으로 응답을 받았을 때의 코드
+    } catch (e) {
+      print('Error: $e');
     }
   }
 
@@ -81,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           const SizedBox(height: 16),
           FloatingActionButton(
-            onPressed: _fetchData,
+            onPressed: _fetch,
             tooltip: 'Fetch Data',
             child: const Icon(Icons.cloud_download),
           ),

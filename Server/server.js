@@ -1,10 +1,9 @@
 const express = require('express');
 const mysql = require('mysql');
-const bodyParser = require('body-parser');
 const app = express();
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 const db = mysql.createConnection({
   host: 'localhost',
@@ -32,7 +31,7 @@ app.get('/users', (req, res) => {
 // 새로운 사용자 추가 엔드포인트
 app.post('/users', (req, res) => {
   const { email, password } = req.body;
-  const query = 'INSERT INTO users (email, password) VALUES (?, ?)';
+  const query = 'INSERT INTO tb_example (email, password) VALUES (?, ?)';
   db.query(query, [email, password], (err, result) => {
     if (err) throw err;
     res.json({ message: '사용자가 추가되었습니다.', userId: result.insertId });
