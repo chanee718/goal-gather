@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'login_platform.dart';
 import 'dart:convert';
 
 void main() {
@@ -32,7 +35,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  LoginPlatform _loginPlatform = LoginPlatform.none;
+  static const baseUrl = 'http://143.248.228.117:3000/users';
   int _counter = 0;
+  String test = '3000';
 
   void _incrementCounter() {
     setState(() {
@@ -40,8 +46,24 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    if (googleUser != null) {
+      setState(() {
+        _loginPlatform = LoginPlatform.google;
+      });
+    }
+  }
+
+  void signOut() async {
+    await GoogleSignIn().signOut();
+    setState(() {
+      _loginPlatform = LoginPlatform.none;
+    });
+  }
+
   _fetch() async {
-    final url = Uri.parse('http://172.10.7.43:80/users');
+    final url = Uri.parse('$baseUrl?test=$test');
     try {
       var res = await http.get(url);
       if (res.statusCode == 200) {
@@ -74,6 +96,19 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            if (_loginPlatform == LoginPlatform.none)
+              ElevatedButton(
+                  onPressed: signInWithGoogle,
+                  child: Text('Google로 로그인'),
+              ),
+            if (_loginPlatform == LoginPlatform.google)
+              ElevatedButton(
+                  onPressed: signOut,
+                  child: Text('로그아웃'),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.red),
+                  ),
+              )
           ],
         ),
       ),
