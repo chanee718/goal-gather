@@ -130,19 +130,30 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            if (_loginPlatform == LoginPlatform.none)
+            if (_loginPlatform == LoginPlatform.none) ...[
+                ElevatedButton(
+                onPressed: signInWithGoogle,
+                child: Text('Google로 로그인'),
+                ),
+                ElevatedButton(
+                onPressed: signInWithNaver,
+                child: Text('Naver로 로그인'),
+                ),
+            ],
+            if (_loginPlatform == LoginPlatform.google || _loginPlatform == LoginPlatform.naver)
               ElevatedButton(
-                  onPressed: signInWithGoogle,
-                  child: Text('Google로 로그인'),
+                onPressed: () {
+                  if (_loginPlatform == LoginPlatform.google) {
+                    GooglesignOut();
+                  } else if (_loginPlatform == LoginPlatform.naver) {
+                    NaversignOut();
+                  }
+                },
+                child: Text('로그아웃'),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.red),
+                ),
               ),
-            if (_loginPlatform == LoginPlatform.google)
-              ElevatedButton(
-                  onPressed: GooglesignOut,
-                  child: Text('로그아웃'),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.red),
-                  ),
-              )
           ],
         ),
       ),
@@ -160,11 +171,6 @@ class _MyHomePageState extends State<MyHomePage> {
             tooltip: 'Fetch Data',
             child: const Icon(Icons.cloud_download),
           ),
-          FloatingActionButton(
-            onPressed: _loginPlatform != LoginPlatform.none ? NaversignOut : signInWithNaver,
-            tooltip: 'Naver Login',
-            child: Image.asset('asset/image/naver_logo.png', width: 30.0, height: 30.0),
-          )
         ],
       ),
     );
