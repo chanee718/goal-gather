@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'login_platform.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,7 +35,46 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  LoginPlatform _loginPlatform = LoginPlatform.none;
   int _counter = 0;
+
+  void signInWithNaver() async {
+    final NaverLoginResult result = await FlutterNaverLogin.logIn();
+
+    if (result.status == NaverLoginStatus.loggedIn) {
+      print('accessToken = ${result.accessToken}');
+      print('id = ${result.account.id}');
+      print('email = ${result.account.email}');
+      print('name = ${result.account.name}');
+
+      setState(() {
+        _loginPlatform = LoginPlatform.naver;
+      });
+    }
+  }
+
+  void signOut() async {
+    switch (_loginPlatform) {
+      case LoginPlatform.facebook:
+        break;
+      case LoginPlatform.google:
+        break;
+      case LoginPlatform.kakao:
+        break;
+      case LoginPlatform.naver:
+        await FlutterNaverLogin.logOut();
+        break;
+      case LoginPlatform.apple:
+        break;
+      case LoginPlatform.none:
+        break;
+    }
+
+    setState(() {
+      _loginPlatform = LoginPlatform.none;
+    });
+  }
+
 
   void _incrementCounter() {
     setState(() {
@@ -91,6 +133,11 @@ class _MyHomePageState extends State<MyHomePage> {
             tooltip: 'Fetch Data',
             child: const Icon(Icons.cloud_download),
           ),
+          FloatingActionButton(
+            onPressed: _loginPlatform != LoginPlatform.none ? signOut : signInWithNaver,
+            tooltip: 'Naver Login',
+            child: Image.asset('asset/image/naver_logo.png', width: 30.0, height: 30.0),
+          )
         ],
       ),
     );
