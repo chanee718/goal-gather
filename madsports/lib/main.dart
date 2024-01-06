@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:http/http.dart' as http;
-import 'package:url_launcher/url_launcher.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'login_platform.dart';
 import 'dart:convert';
@@ -39,7 +38,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   LoginPlatform _loginPlatform = LoginPlatform.none;
-  static const baseUrl = 'http://143.248.228.117:3000/users';
+  static const baseUrl = 'http://172.10.7.43:80/users';
   int _counter = 0;
   String test = '3000';
 
@@ -58,18 +57,12 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void signOut() async {
+  void NaversignOut() async {
     switch (_loginPlatform) {
-      case LoginPlatform.facebook:
-        break;
       case LoginPlatform.google:
-        break;
-      case LoginPlatform.kakao:
         break;
       case LoginPlatform.naver:
         await FlutterNaverLogin.logOut();
-        break;
-      case LoginPlatform.apple:
         break;
       case LoginPlatform.none:
         break;
@@ -96,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void signOut() async {
+  void GooglesignOut() async {
     await GoogleSignIn().signOut();
     setState(() {
       _loginPlatform = LoginPlatform.none;
@@ -144,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             if (_loginPlatform == LoginPlatform.google)
               ElevatedButton(
-                  onPressed: signOut,
+                  onPressed: GooglesignOut,
                   child: Text('로그아웃'),
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.red),
@@ -168,7 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: const Icon(Icons.cloud_download),
           ),
           FloatingActionButton(
-            onPressed: _loginPlatform != LoginPlatform.none ? signOut : signInWithNaver,
+            onPressed: _loginPlatform != LoginPlatform.none ? NaversignOut : signInWithNaver,
             tooltip: 'Naver Login',
             child: Image.asset('asset/image/naver_logo.png', width: 30.0, height: 30.0),
           )
