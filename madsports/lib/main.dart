@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'login_platform.dart';
 import 'dart:convert';
-
-import 'login_platform.dart';
 
 void main() {
   runApp(const MyApp());
@@ -41,6 +40,8 @@ class _MyHomePageState extends State<MyHomePage> {
   static const baseUrl = 'http://172.10.7.43:80/users';
   int _counter = 0;
   String test = '3000';
+  String email = '';
+  String name = '';
 
   void signInWithNaver() async {
     final NaverLoginResult result = await FlutterNaverLogin.logIn();
@@ -50,6 +51,8 @@ class _MyHomePageState extends State<MyHomePage> {
       print('id = ${result.account.id}');
       print('email = ${result.account.email}');
       print('name = ${result.account.name}');
+      email = result.account.email;
+      name = result.account.name;
 
       setState(() {
         _loginPlatform = LoginPlatform.naver;
@@ -85,6 +88,8 @@ class _MyHomePageState extends State<MyHomePage> {
     if (googleUser != null) {
       setState(() {
         _loginPlatform = LoginPlatform.google;
+        email = googleUser.email;
+        name = googleUser.id;
       });
     }
   }
@@ -172,6 +177,72 @@ class _MyHomePageState extends State<MyHomePage> {
             child: const Icon(Icons.cloud_download),
           ),
         ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+
+            UserAccountsDrawerHeader(
+              accountName: _loginPlatform == LoginPlatform.none ?
+                const Text('로그인 필요', style: TextStyle(color: Colors.white),) : Text(name, style: const TextStyle(color: Colors.white),),
+              accountEmail: _loginPlatform == LoginPlatform.none ?
+                const Text('로그인 필요', style: TextStyle(color: Colors.white),) : Text(email, style: const TextStyle(color: Colors.white),),
+              currentAccountPicture: const CircleAvatar(
+                backgroundImage: AssetImage('images/sample_background.gif'),
+              ),
+              decoration: const BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage('images/naver_logo.png'),
+                      fit: BoxFit.cover
+                  ),
+                color: Colors.amber
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.sports),
+              title: Text('My favorite Team'),
+              onTap: (){
+                Fluttertoast.showToast(
+                  msg: "edit team",
+                  gravity: ToastGravity.BOTTOM,
+                  backgroundColor: Colors.redAccent,
+                  fontSize: 20,
+                  textColor: Colors.white,
+                  toastLength: Toast.LENGTH_SHORT
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.chat),
+              title: Text('My chattings'),
+              onTap: (){
+                Fluttertoast.showToast(
+                  msg: "edit chat",
+                  gravity: ToastGravity.BOTTOM,
+                  backgroundColor: Colors.redAccent,
+                  fontSize: 20,
+                  textColor: Colors.white,
+                  toastLength: Toast.LENGTH_SHORT
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.shopping_cart),
+              title: Text('My Shop'),
+              onTap: (){
+                Fluttertoast.showToast(
+                    msg: "edit shop",
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: Colors.redAccent,
+                    fontSize: 20,
+                    textColor: Colors.white,
+                    toastLength: Toast.LENGTH_SHORT
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
