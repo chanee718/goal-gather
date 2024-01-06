@@ -5,8 +5,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'login_platform.dart';
 import 'dart:convert';
 
-import 'login_platform.dart';
-
 void main() {
   runApp(const MyApp());
 }
@@ -38,8 +36,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   LoginPlatform _loginPlatform = LoginPlatform.none;
-  static const baseUrl = 'http://172.10.7.43:80/users';
-  int _counter = 0;
+  static const baseUrl = 'http://143.248.228.117:3000/users';
   String test = '3000';
 
   void signInWithNaver() async {
@@ -73,19 +70,49 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   void signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    final url = Uri.parse('http://143.248.228.29:3000/auth/google-login');
     if (googleUser != null) {
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      print('Google User Email: ${googleUser.email}');
+      print('Google User Display Name: ${googleUser.displayName}');
+
+      print('email type: ${googleUser.email.runtimeType}');
+      print('name type: ${googleUser.displayName.runtimeType}');
+
       setState(() {
         _loginPlatform = LoginPlatform.google;
+        test = googleUser.email ?? '';
       });
+
+      var res = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'email': googleUser.email,
+          'username': googleUser.displayName,
+        })
+      );
+
+      if (res.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(res.body);
+
+        // 응답에서 원하는 데이터 추출
+        String message = data['message'];
+        int userId = data['userId'];
+
+        // 메시지 출력 또는 화면 업데이트 등의 로직 추가
+        print(message);
+        print('User ID: $userId');
+
+        // 여기서 메시지나 사용자 ID를 화면에 출력하거나 다른 화면 업데이트 작업을 수행할 수 있습니다.
+      } else {
+        print('서버로부터 오류 응답. Status Code: ${res.statusCode}');
+      }
+
+
     }
   }
 
@@ -93,18 +120,23 @@ class _MyHomePageState extends State<MyHomePage> {
     await GoogleSignIn().signOut();
     setState(() {
       _loginPlatform = LoginPlatform.none;
+      test = 'logged out';
     });
   }
 
   _fetch() async {
-    final url = Uri.parse('$baseUrl?test=$test');
+    final url = Uri.parse('http://143.248.228.29:3000/users');
     try {
       var res = await http.get(url);
       if (res.statusCode == 200) {
         var data = json.decode(res.body);
         print("data: $data");
+        setState(() {
+          test = data[1]['email'];
+        });
       } else {
-        print('서버로부터 데이터를 가져오는 데 오류가 발생했습니다.');
+        print('서버로부터 데이터를 가져오는 데 오류가 발생했습니다. Status Code: ${res.statusCode}');
+        print('Response Body: ${res.body}');
       }
       // 성공적으로 응답을 받았을 때의 코드
     } catch (e) {
@@ -127,18 +159,18 @@ class _MyHomePageState extends State<MyHomePage> {
               'You have pushed the button this many times:',
             ),
             Text(
-              '$_counter',
+              test,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             if (_loginPlatform == LoginPlatform.none) ...[
-                ElevatedButton(
+              ElevatedButton(
                 onPressed: signInWithGoogle,
                 child: Text('Google로 로그인'),
-                ),
-                ElevatedButton(
+              ),
+              ElevatedButton(
                 onPressed: signInWithNaver,
                 child: Text('Naver로 로그인'),
-                ),
+              ),
             ],
             if (_loginPlatform == LoginPlatform.google || _loginPlatform == LoginPlatform.naver)
               ElevatedButton(
@@ -154,18 +186,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   backgroundColor: MaterialStateProperty.all(Colors.red),
                 ),
               ),
+            // WebView 추가
           ],
         ),
       ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          FloatingActionButton(
-            onPressed: _incrementCounter,
-            tooltip: 'Increment',
-            child: const Icon(Icons.add),
-          ),
-          const SizedBox(height: 16),
           FloatingActionButton(
             onPressed: _fetch,
             tooltip: 'Fetch Data',
