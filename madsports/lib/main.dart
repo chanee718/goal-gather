@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
-import 'login_platform.dart';
+import 'login_page.dart';
+import 'AuthService.dart';
 import 'dart:convert';
 
 void main() {
@@ -27,105 +28,64 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
   final String title;
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  LoginPlatform _loginPlatform = LoginPlatform.none;
-  static const baseUrl = 'http://143.248.228.117:3000/users';
   String test = '3000';
+  late Future<bool> isLoggedIn;
 
-  void signInWithNaver() async {
-    final NaverLoginResult result = await FlutterNaverLogin.logIn();
-
-    if (result.status == NaverLoginStatus.loggedIn) {
-      print('accessToken = ${result.accessToken}');
-      print('id = ${result.account.id}');
-      print('email = ${result.account.email}');
-      print('name = ${result.account.name}');
-
-      setState(() {
-        _loginPlatform = LoginPlatform.naver;
-      });
-    }
+  @override
+  void initState() {
+    super.initState();
+    // 초기화 시 로그인 상태를 가져와 Future 변수에 할당
+    isLoggedIn = isLoggedin();
   }
 
-  void NaversignOut() async {
-    switch (_loginPlatform) {
-      case LoginPlatform.google:
+  Future<void> refreshState() async {
+    // 상태를 갱신할 때 로그인 상태를 다시 가져옴
+    setState(() {
+      isLoggedIn = isLoggedin();
+    });
+  }
+
+  Future<bool> isLoggedin() async {
+    return await AuthService.getToken() != null && await AuthService.getLoginPlatform() != 'loggedOut';
+  }
+
+  void signOut() async {
+    String loginPlatform = (await AuthService.getLoginPlatform()) ?? '';
+    print('$loginPlatform');
+    switch (loginPlatform) {
+      case 'google':
+        await GoogleSignIn().signOut();
+        print("google logged out");
         break;
-      case LoginPlatform.naver:
+      case 'naver':
         await FlutterNaverLogin.logOut();
+        print("naver logged out");
         break;
-      case LoginPlatform.none:
+      case 'loggedOut':
         break;
     }
-
-    setState(() {
-      _loginPlatform = LoginPlatform.none;
-    });
+    await AuthService.logout();
+    refreshState();
   }
 
-  void signInWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    final url = Uri.parse('http://143.248.228.29:3000/auth/google-login');
-    if (googleUser != null) {
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-      print('Google User Email: ${googleUser.email}');
-      print('Google User Display Name: ${googleUser.displayName}');
-
-      print('email type: ${googleUser.email.runtimeType}');
-      print('name type: ${googleUser.displayName.runtimeType}');
-
-      setState(() {
-        _loginPlatform = LoginPlatform.google;
-        test = googleUser.email ?? '';
-      });
-
-      var res = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'email': googleUser.email,
-          'username': googleUser.displayName,
-        })
-      );
-
-      if (res.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(res.body);
-
-        // 응답에서 원하는 데이터 추출
-        String message = data['message'];
-        int userId = data['userId'];
-
-        // 메시지 출력 또는 화면 업데이트 등의 로직 추가
-        print(message);
-        print('User ID: $userId');
-
-        // 여기서 메시지나 사용자 ID를 화면에 출력하거나 다른 화면 업데이트 작업을 수행할 수 있습니다.
-      } else {
-        print('서버로부터 오류 응답. Status Code: ${res.statusCode}');
-      }
-
-
-    }
-  }
-
-  void GooglesignOut() async {
-    await GoogleSignIn().signOut();
-    setState(() {
-      _loginPlatform = LoginPlatform.none;
-      test = 'logged out';
-    });
+  void navigateToLoginPage() async {
+    await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage())
+    );
+    refreshState(); // 로그인 후 Main으로 돌아왔을 때 상태를 갱신
   }
 
   _fetch() async {
     final url = Uri.parse('http://143.248.228.29:3000/users');
+    String loginPlatform = (await AuthService.getLoginPlatform()) ?? '';
+    print('$loginPlatform');
     try {
       var res = await http.get(url);
       if (res.statusCode == 200) {
@@ -162,30 +122,29 @@ class _MyHomePageState extends State<MyHomePage> {
               test,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            if (_loginPlatform == LoginPlatform.none) ...[
-              ElevatedButton(
-                onPressed: signInWithGoogle,
-                child: Text('Google로 로그인'),
-              ),
-              ElevatedButton(
-                onPressed: signInWithNaver,
-                child: Text('Naver로 로그인'),
-              ),
-            ],
-            if (_loginPlatform == LoginPlatform.google || _loginPlatform == LoginPlatform.naver)
-              ElevatedButton(
-                onPressed: () {
-                  if (_loginPlatform == LoginPlatform.google) {
-                    GooglesignOut();
-                  } else if (_loginPlatform == LoginPlatform.naver) {
-                    NaversignOut();
+            FutureBuilder<bool>(
+              future: isLoggedin(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.data == true) {
+                    return ElevatedButton(
+                      onPressed: signOut,
+                      child: Text('Log Out'),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.red),
+                      ),
+                    );
+                  } else {
+                    return ElevatedButton(
+                      onPressed: navigateToLoginPage,
+                      child: Text('Log In'),
+                    );
                   }
-                },
-                child: Text('로그아웃'),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.red),
-                ),
-              ),
+                } else {
+                  return CircularProgressIndicator();
+                }
+              },
+            ),
             // WebView 추가
           ],
         ),

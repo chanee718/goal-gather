@@ -15,10 +15,12 @@ router.post('/google-login', async (req, res) => {
     if (rows.length === 0) {
       // 이메일이 테이블에 없으면 새로운 사용자로 추가
       const [insertResult] = await db.execute('INSERT INTO sample_user (email, username, prefer_team) VALUES (?, ?, ?)', [email, username, null]);
-      res.json({ message: 'Google로 로그인되었습니다.', userId: insertResult.insertId });
+      console.log(insertResult.insertId);
+      res.json({ flag: 1 });
     } else {
       // 이미 등록된 사용자인 경우
-      res.json({ message: 'Google로 로그인되었습니다.', userId: rows[0].user_id });
+      console.log(rows[0].user_id);
+      res.json({ flag: 0});
     }
   } catch (error) {
     console.error('쿼리 실행 중 에러:', error);
