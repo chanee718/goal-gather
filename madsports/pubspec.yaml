@@ -31,6 +31,8 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^1.1.2
+  url_launcher: ^6.0.9
+  google_sign_in: ^5.4.1
   flutter_naver_login: ^1.8.0
 
 
@@ -59,6 +61,8 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/image/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
