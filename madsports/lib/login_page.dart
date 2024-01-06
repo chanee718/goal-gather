@@ -35,7 +35,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> signInWithGoogle() async {
-    final BuildContext localContext = context;
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     final url = Uri.parse('http://143.248.228.29:3000/auth/google-login');
     if (googleUser != null) {
