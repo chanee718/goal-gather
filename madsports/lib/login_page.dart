@@ -19,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
     final NaverLoginResult result = await FlutterNaverLogin.logIn();
     if (result.status == NaverLoginStatus.loggedIn) {
       // Update login platform using AuthService
-      AuthService.saveToken(result.accessToken as String? ?? ''); // Save token
+      AuthService.saveToken(result.accessToken?.accessToken ?? ''); // Save token
       AuthService.saveUserInfo({
         'id': result.account.id ?? '',
         'email': result.account.email ?? '',
@@ -40,6 +40,10 @@ class _LoginPageState extends State<LoginPage> {
         var flag = data['flag'];
         if (flag == 1) { // 새로운 계정인지 확인
           print("new account");
+
+          await Future.delayed(Duration.zero, () {
+            Navigator.pop(context);
+          });
         } else { // 기존 계정인지 확인
           print("existing account");
 
