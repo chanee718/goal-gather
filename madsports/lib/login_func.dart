@@ -4,7 +4,6 @@ import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
-import 'login_platform.dart';
 import 'dart:convert';
 
 void main() {

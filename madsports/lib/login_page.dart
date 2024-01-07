@@ -3,8 +3,6 @@ import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-import 'login_platform.dart';  // Import your existing LoginPlatform enum
 import 'AuthService.dart';
 
 class LoginPage extends StatefulWidget {
@@ -16,14 +14,10 @@ class _LoginPageState extends State<LoginPage> {
   String test = '3000';
 
   void signInWithNaver() async {
+
+    final url = Uri.parse('http://172.10.7.43:80/auth/google-login');
     final NaverLoginResult result = await FlutterNaverLogin.logIn();
-
     if (result.status == NaverLoginStatus.loggedIn) {
-      print('accessToken = ${result.accessToken}');
-      print('id = ${result.account.id}');
-      print('email = ${result.account.email}');
-      print('name = ${result.account.name}');
-
       // Update login platform using AuthService
       AuthService.saveToken(result.accessToken as String? ?? ''); // Save token
       AuthService.saveUserInfo({
@@ -31,6 +25,30 @@ class _LoginPageState extends State<LoginPage> {
         'email': result.account.email ?? '',
         'name': result.account.name ?? '',
       }, 'naver'); // Save user info
+
+      var res = await http.post(
+          url,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'email': result.account.email,  // send naver address to server
+            'username': result.account.name,  // send naver user name to server
+          })
+      );
+
+      if (res.statusCode == 200) {
+        var data = json.decode(res.body);
+        var flag = data['flag'];
+        if (flag == 1) { // 새로운 계정인지 확인
+          print("new account");
+        } else { // 기존 계정인지 확인
+          print("existing account");
+
+          // 비동기 함수 내에서 context 사용을 피하기 위해 Future.delayed 사용
+          await Future.delayed(Duration.zero, () {
+            Navigator.pop(context);
+          });
+        }
+      }
     }
   }
 

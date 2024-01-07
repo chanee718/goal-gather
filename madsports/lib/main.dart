@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:madsports/GameDetailsPage.dart';
 import 'package:madsports/userinfodrawer.dart';
 import 'login_page.dart';
-import 'login_platform.dart';
 import 'package:madsports/sample_query.dart';
 import 'dart:convert';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
