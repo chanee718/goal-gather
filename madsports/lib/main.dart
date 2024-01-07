@@ -4,9 +4,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
+import 'package:madsports/GameDetailsPage.dart';
 import 'package:madsports/userinfodrawer.dart';
 import 'login_platform.dart';
+import 'package:madsports/sample_query.dart';
 import 'dart:convert';
+
 
 void main() {
   runApp(const MyApp());
@@ -126,12 +129,29 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       children: List.generate(13, (index) {
         DateTime tabDate = currentDate.subtract(Duration(days: 6 - index));
         String formattedDate = DateFormat('yyyy-MM-dd').format(tabDate);
-        return Center(
-          child: Text(
-            'Content for $formattedDate',
-            style: TextStyle(fontSize: 20),
-          ),
+
+        List<String> game_info = get_game_by_date(tabDate);
+
+        return ListView.builder(
+          itemCount: game_info.length,
+          itemBuilder: (context, index) {
+            return InkWell(
+              onTap: () {
+                // 항목을 탭할 때 새 창을 열기
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GameDetailsPage(matchTitle: game_info[index]),
+                  ),
+                );
+              },
+              child: ListTile(
+                title: Text(game_info[index]),
+              ),
+            );
+          },
         );
+
       }),
     );
   }
