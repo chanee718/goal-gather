@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_naver_login/flutter_naver_login.dart';
-import 'package:http/http.dart' as http;
-import 'package:google_sign_in/google_sign_in.dart';
-import 'login_page.dart';
-import 'AuthService.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
+import 'package:madsports/GameDetailsPage.dart';
+import 'package:madsports/userinfodrawer.dart';
+import 'login_platform.dart';
+import 'package:madsports/sample_query.dart';
 import 'dart:convert';
+
+import 'AuthService.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,137 +31,130 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
+
   final String title;
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
+  static const baseUrl = 'http://172.10.7.43:80/users';
   String test = '3000';
-  late Future<bool> isLoggedIn;
+  String email = '';
+  String name = '';
+
+  late TabController _tabController;
+  late DateTime currentDate;
 
   @override
   void initState() {
+    currentDate = DateTime.now();
     super.initState();
-    // 초기화 시 로그인 상태를 가져와 Future 변수에 할당
-    isLoggedIn = isLoggedin();
   }
 
-  Future<void> refreshState() async {
-    // 상태를 갱신할 때 로그인 상태를 다시 가져옴
+  void _handleTabSelection() {
     setState(() {
-      isLoggedIn = isLoggedin();
+      currentDate = currentDate.add(Duration(days: _tabController.index - 6));
     });
-  }
-
-  Future<bool> isLoggedin() async {
-    return await AuthService.getToken() != null && await AuthService.getLoginPlatform() != 'loggedOut';
-  }
-
-  void signOut() async {
-    String loginPlatform = (await AuthService.getLoginPlatform()) ?? '';
-    print('$loginPlatform');
-    switch (loginPlatform) {
-      case 'google':
-        await GoogleSignIn().signOut();
-        print("google logged out");
-        break;
-      case 'naver':
-        await FlutterNaverLogin.logOut();
-        print("naver logged out");
-        break;
-      case 'loggedOut':
-        break;
-    }
-    await AuthService.logout();
-    refreshState();
-  }
-
-  void navigateToLoginPage() async {
-    await Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => LoginPage())
-    );
-    refreshState(); // 로그인 후 Main으로 돌아왔을 때 상태를 갱신
-  }
-
-  _fetch() async {
-    final url = Uri.parse('http://143.248.228.29:3000/users');
-    String loginPlatform = (await AuthService.getLoginPlatform()) ?? '';
-    print('$loginPlatform');
-    try {
-      var res = await http.get(url);
-      if (res.statusCode == 200) {
-        var data = json.decode(res.body);
-        print("data: $data");
-        setState(() {
-          test = data[1]['email'];
-        });
-      } else {
-        print('서버로부터 데이터를 가져오는 데 오류가 발생했습니다. Status Code: ${res.statusCode}');
-        print('Response Body: ${res.body}');
-      }
-      // 성공적으로 응답을 받았을 때의 코드
-    } catch (e) {
-      print('Error: $e');
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    _tabController = TabController(
+        animationDuration: const Duration(milliseconds: 800),
+        length: 13,
+        initialIndex: 6,
+        vsync: this
+    );
+    _tabController.addListener(() {
+      setState(() {
+        currentDate = currentDate.add(Duration(days: _tabController.index - 6));
+      });
+    });
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              test,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            FutureBuilder<bool>(
-              future: isLoggedin(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.data == true) {
-                    return ElevatedButton(
-                      onPressed: signOut,
-                      child: Text('Log Out'),
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.red),
-                      ),
-                    );
-                  } else {
-                    return ElevatedButton(
-                      onPressed: navigateToLoginPage,
-                      child: Text('Log In'),
-                    );
-                  }
-                } else {
-                  return CircularProgressIndicator();
-                }
-              },
-            ),
-            // WebView 추가
-          ],
-        ),
-      ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+      body: Column(
         children: [
-          FloatingActionButton(
-            onPressed: _fetch,
-            tooltip: 'Fetch Data',
-            child: const Icon(Icons.cloud_download),
+          _buildTabBar(),
+          Expanded(
+            child: _buildTabBarView(),
           ),
         ],
       ),
+      drawer: Drawer(
+        child: FutureBuilder<bool>(
+          future: AuthService.isLoggedIn(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return ListView(
+                padding: EdgeInsets.zero,
+                children: userinfo_drawer(
+                  snapshot.data,
+                  email,
+                  name,
+                ),
+              );
+            } else {
+              return CircularProgressIndicator();
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabBar() {
+    return Container(
+      padding: EdgeInsets.all(4.0),
+      child: TabBar(
+        controller: _tabController,
+        isScrollable: true,
+        labelPadding: EdgeInsets.symmetric(horizontal: 16.0),
+        tabs: List.generate(13, (index) {
+          DateTime tabDate = currentDate.subtract(Duration(days: 6 - index));
+          String formattedDate = DateFormat('MM/dd').format(tabDate);
+          return Tab(
+            text: formattedDate,
+          );
+        }),
+        onTap: (index) {},
+      ),
+    );
+  }
+
+  Widget _buildTabBarView() {
+    return TabBarView(
+      controller: _tabController,
+      children: List.generate(13, (index) {
+        DateTime tabDate = currentDate.subtract(Duration(days: 6 - index));
+        String formattedDate = DateFormat('yyyy-MM-dd').format(tabDate);
+
+        List<String> game_info = get_game_by_date(tabDate);
+
+        return ListView.builder(
+          itemCount: game_info.length,
+          itemBuilder: (context, index) {
+            return InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GameDetailsPage(matchTitle: game_info[index]),
+                  ),
+                );
+              },
+              child: ListTile(
+                title: Text(game_info[index]),
+              ),
+            );
+          },
+        );
+      }),
     );
   }
 }
