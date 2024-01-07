@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:madsports/GameDetailsPage.dart';
 import 'package:madsports/userinfodrawer.dart';
@@ -10,6 +7,7 @@ import 'login_platform.dart';
 import 'package:madsports/sample_query.dart';
 import 'dart:convert';
 
+import 'AuthService.dart';
 
 void main() {
   runApp(const MyApp());
@@ -41,7 +39,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
-  LoginPlatform _loginPlatform = LoginPlatform.none;
   static const baseUrl = 'http://172.10.7.43:80/users';
   String test = '3000';
   String email = '';
@@ -54,7 +51,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   void initState() {
     currentDate = DateTime.now();
     super.initState();
-
   }
 
   void _handleTabSelection() {
@@ -63,18 +59,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     });
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-
     _tabController = TabController(
         animationDuration: const Duration(milliseconds: 800),
         length: 13,
         initialIndex: 6,
         vsync: this
     );
-    _tabController.addListener((){
+    _tabController.addListener(() {
       setState(() {
         currentDate = currentDate.add(Duration(days: _tabController.index - 6));
       });
@@ -94,9 +87,22 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         ],
       ),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: userinfo_drawer(_loginPlatform, email, name),
+        child: FutureBuilder<bool>(
+          future: AuthService.isLoggedIn(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return ListView(
+                padding: EdgeInsets.zero,
+                children: userinfo_drawer(
+                  snapshot.data,
+                  email,
+                  name,
+                ),
+              );
+            } else {
+              return CircularProgressIndicator();
+            }
+          },
         ),
       ),
     );
@@ -116,9 +122,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             text: formattedDate,
           );
         }),
-        onTap: (index){
-
-        },
+        onTap: (index) {},
       ),
     );
   }
@@ -137,7 +141,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           itemBuilder: (context, index) {
             return InkWell(
               onTap: () {
-                // 항목을 탭할 때 새 창을 열기
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -151,10 +154,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             );
           },
         );
-
       }),
     );
   }
-
-
 }
