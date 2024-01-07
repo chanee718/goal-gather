@@ -3,10 +3,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:madsports/GameDetailsPage.dart';
 import 'package:madsports/userinfodrawer.dart';
+import 'login_page.dart';
 import 'login_platform.dart';
 import 'package:madsports/sample_query.dart';
 import 'dart:convert';
-
+import 'package:flutter_naver_login/flutter_naver_login.dart';
+import 'package:http/http.dart' as http;
+import 'package:google_sign_in/google_sign_in.dart';
 import 'AuthService.dart';
 
 void main() {
@@ -58,6 +61,32 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       currentDate = currentDate.add(Duration(days: _tabController.index - 6));
     });
   }
+  void navigateToLoginPage() async {
+    await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage())
+    );
+    setState(() { });
+  }
+
+  void signOut() async {
+    String loginPlatform = (await AuthService.getLoginPlatform()) ?? '';
+    print('$loginPlatform');
+    switch (loginPlatform) {
+      case 'google':
+        await GoogleSignIn().signOut();
+        print("google logged out");
+        break;
+      case 'naver':
+        await FlutterNaverLogin.logOut();
+        print("naver logged out");
+        break;
+      case 'loggedOut':
+        break;
+    }
+    await AuthService.logout();
+    setState(() { });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,9 +123,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               return ListView(
                 padding: EdgeInsets.zero,
                 children: userinfo_drawer(
-                  snapshot.data,
+                  snapshot.data!,
                   email,
                   name,
+                  () {
+                    navigateToLoginPage();
+                  },
+                  () {
+                    signOut();
+                  }
                 ),
               );
             } else {
