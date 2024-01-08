@@ -65,6 +65,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         context,
         MaterialPageRoute(builder: (context) => LoginPage())
     );
+    Map<String, dynamic>? userInfo = await AuthService.getUserInfo();
+
+    // userInfo가 null이 아니면, 즉 사용자 정보가 존재하면 name을 출력
+    if (userInfo != null) {
+      name = userInfo['name'];
+      email = userInfo['email'];
+    }
     setState(() { });
   }
 
@@ -84,11 +91,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         break;
     }
     await AuthService.logout();
+    name = '';
+    email = '';
     setState(() { });
   }
 
   @override
   Widget build(BuildContext context) {
+
     _tabController = TabController(
         animationDuration: const Duration(milliseconds: 800),
         length: 13,
