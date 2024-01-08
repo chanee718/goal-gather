@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:madsports/store_model.dart';
+import 'package:madsports/temp_classes.dart';
 
 class AddStoreScreen extends StatefulWidget {
   final Function(Store) onStoreAdded;

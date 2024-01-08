@@ -1,80 +1,76 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:madsports/add_chat_room_screen.dart';
+import 'package:madsports/sample_query.dart';
 
-class GameDetailsPage extends StatelessWidget {
+import 'add_store_screen.dart';
+import 'chat_room_list.dart';
+
+class GameDetailsPage extends StatefulWidget {
   final String matchTitle;
-
   const GameDetailsPage({super.key, required this.matchTitle});
 
   @override
+  State<GameDetailsPage> createState() => _GameDetailsPageState();
+}
+
+
+
+class _GameDetailsPageState extends State<GameDetailsPage> {
+
+  @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // 위쪽 30%에 경기 정보를 표시하는 컨테이너
-        Container(
-          height: MediaQuery.of(context).size.height * 0.3,
-          color: Colors.greenAccent,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              // 좌측 팀 로고 (이미지 경로나 네트워크 URL로 변경하세요)
-              Image.asset(
-                'asset/image/left.jpg',
-                width: 50,
-                height: 50,
-              ),
-              // 가운데에 경기 이름과 시간을 표시
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    matchTitle,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+    return Scaffold(
+      appBar: AppBar(title: Text('경기 정보')),
+      body: Column(
+        children: [
+          // 상단 30% 영역
+          Container(
+            height: MediaQuery.of(context).size.height * 0.3,
+            child: Row(
+              children: [
+                // 왼쪽 팀 사진
+                Expanded(child: Image.asset(
+                  'asset/image/left.jpg',
+                  width: 50,
+                  height: 50,
+                )),
+                // 경기 정보 중앙
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(widget.matchTitle, style: TextStyle(fontSize: 24)),
+                      Text('경기 시간', style: TextStyle(fontSize: 16)),
+                    ],
                   ),
-                  SizedBox(height: 5),
-                  Text(
-                    '경기 시간: 2024-01-07 18:00',
-                    style: TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-              // 우측 팀 로고 (이미지 경로나 네트워크 URL로 변경하세요)
-              Image.asset(
-                'asset/image/right.png',
-                width: 50,
-                height: 50,
-              ),
-            ],
-          ),
-        ),
-        // 아래쪽 70%에는 리스트뷰로 관심있는 사람들을 표시
-        Expanded(
-          child: ListView.builder(
-            itemCount: 10, // 예시로 10개의 아이템을 표시
-            itemBuilder: (context, index) {
-              return Card(
-                child: ExpansionTile(
-                  title: Text("Hell World! $index"),
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        "Hell! $index",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ],
                 ),
-              );
-            },
+                // 오른쪽 팀 사진
+                Expanded(child: Image.asset(
+                  'asset/image/right.png',
+                  width: 50,
+                  height: 50,
+                )),
+              ],
+            ),
           ),
-        ),
-      ],
+          // 아래쪽 70% 영역 (채팅방 정보)
+          Expanded(
+            child: ChatRoomList(get_chat_by_game(widget.matchTitle)),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          // 가게 등록 화면으로 이동하고 등록된 가게를 리스트에 추가
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddChatRoomScreen(),
+            ),
+          );
+        },
+        child: Icon(Icons.add),
+      ),
     );
   }
 }
