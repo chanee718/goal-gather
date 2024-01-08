@@ -87,6 +87,25 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     setState(() { });
   }
 
+  _fetch() async {
+    final url = Uri.parse('http://143.248.228.45:3000/store/findwithname?findkey=엽떡');
+    try {
+      var res = await http.get(url);
+      if (res.statusCode == 200) {
+        var data = json.decode(res.body);
+        for (var game in data) {
+          print('가게: ${game['place_name']} , 주소: ${game['address']}');
+        }
+      } else {
+        print('서버로부터 데이터를 가져오는 데 오류가 발생했습니다. Status Code: ${res.statusCode}');
+        print('Response Body: ${res.body}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+
+  }
+
   @override
   Widget build(BuildContext context) {
     _tabController = TabController(
@@ -130,7 +149,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   },
                   () {
                     signOut();
-                  }
+                  },
+                  () { _fetch(); }
                 ),
               );
             } else {

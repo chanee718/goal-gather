@@ -4,7 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 typedef LoginCallback = void Function();
 
-List<Widget> userinfo_drawer(bool isLogin, String email, String name, LoginCallback onLoginPressed, LoginCallback onLogoutPressed){
+List<Widget> userinfo_drawer(bool isLogin, String email, String name, LoginCallback onLoginPressed, LoginCallback onLogoutPressed, LoginCallback fetch){
   return [
 
     UserAccountsDrawerHeader(
@@ -75,6 +75,12 @@ List<Widget> userinfo_drawer(bool isLogin, String email, String name, LoginCallb
           }
         },
         child: isLogin == false ? const Text('Login') : const Text('Logout')
-    )
+    ),
+    ElevatedButton(
+        onPressed: () {
+          fetch();
+        },
+        child:  const Text('GET')
+    ),
   ];
 }

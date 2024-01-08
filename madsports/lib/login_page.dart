@@ -15,7 +15,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void signInWithNaver() async {
 
-    final url = Uri.parse('http://172.10.7.43:80/auth/google-login');
+    final url = Uri.parse('http://143.248.228.45:3000/auth/google-login');
     final NaverLoginResult result = await FlutterNaverLogin.logIn();
     if (result.status == NaverLoginStatus.loggedIn) {
       // Update login platform using AuthService
@@ -58,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    final url = Uri.parse('http://172.10.7.43:80/auth/google-login');
+    final url = Uri.parse('http://143.248.228.45:3000/auth/google-login');
     if (googleUser != null) {
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
