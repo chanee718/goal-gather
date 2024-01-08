@@ -130,7 +130,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   },
                   () {
                     signOut();
-                  }
+                  },
+                  context
                 ),
               );
             } else {

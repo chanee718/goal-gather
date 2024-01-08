@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:madsports/ShopListPage.dart';
 
 typedef LoginCallback = void Function();
 
-List<Widget> userinfo_drawer(bool isLogin, String email, String name, LoginCallback onLoginPressed, LoginCallback onLogoutPressed){
+List<Widget> userinfo_drawer(bool isLogin, String email, String name, LoginCallback onLoginPressed, LoginCallback onLogoutPressed, BuildContext con){
   return [
 
     UserAccountsDrawerHeader(
@@ -54,14 +55,12 @@ List<Widget> userinfo_drawer(bool isLogin, String email, String name, LoginCallb
     ListTile(
       leading: Icon(Icons.shopping_cart),
       title: Text('My Shop'),
-      onTap: (){
-        Fluttertoast.showToast(
-            msg: "edit shop",
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.redAccent,
-            fontSize: 20,
-            textColor: Colors.white,
-            toastLength: Toast.LENGTH_SHORT
+      onTap: () {
+        Navigator.push(
+          con,
+          MaterialPageRoute(
+            builder: (con) => ShopListPage(),
+          ),
         );
       },
     ),
