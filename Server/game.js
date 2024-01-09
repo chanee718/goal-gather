@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('./db');
 const axios = require('axios');
+require('dotenv').config();
 
 const router = express.Router();
 const Key = process.env.SPORTSKEY;

@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('./db');
 
 const router = express.Router();
+require('dotenv').config();
 
 const axios = require('axios');
 
