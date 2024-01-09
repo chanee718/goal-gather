@@ -120,7 +120,18 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         children: [
           _buildTabBar(),
           Expanded(
-            child: _buildTabBarView(),
+            child: FutureBuilder<Widget>(
+              future: _buildTabBarView(), // 비동기 함수 호출
+              builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator()); // 로딩 인디케이터
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}')); // 에러 처리
+                } else {
+                  return snapshot.data ?? SizedBox.shrink(); // 데이터 로드 완료
+                }
+              },
+            ),
           ),
         ],
       ),
@@ -181,7 +192,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildTabBarView() {
+  Future<Widget> _buildTabBarView() async {
+    Map<String, dynamic>? userInfo = await AuthService.getUserInfo();
     return TabBarView(
       controller: _tabController,
       children: List.generate(13, (index) {
@@ -211,10 +223,21 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 itemBuilder: (context, index) {
                   return InkWell(
                     onTap: () {
+                      if(userInfo == null){
+                        Fluttertoast.showToast(
+                            msg: "Login First!",
+                            gravity: ToastGravity.BOTTOM,
+                            backgroundColor: Colors.redAccent,
+                            fontSize: 20,
+                            textColor: Colors.white,
+                            toastLength: Toast.LENGTH_SHORT
+                        );
+                        return;
+                      }
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => GameDetailsPage(game_info: game_info[index]),
+                          builder: (context) => GameDetailsPage(game_info: game_info[index], email: userInfo['email']),
                         ),
                       );
                     },

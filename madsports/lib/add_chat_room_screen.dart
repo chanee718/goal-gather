@@ -3,7 +3,9 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 class AddChatRoomScreen extends StatefulWidget {
-  const AddChatRoomScreen({super.key});
+  final String email;
+  final Function() onUpdate;
+  const AddChatRoomScreen({super.key, required this.email, required this.onUpdate});
 
   @override
   State<AddChatRoomScreen> createState() => _AddChatRoomScreenState();
