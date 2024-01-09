@@ -40,7 +40,7 @@ class _ShopListPageState extends State<ShopListPage> {
             itemCount: stores.length,
             itemBuilder: (context, index) {
               return ListTile(
-                leading: stores[index].image != null
+                leading: stores[index]['store_image'] != null
                     ? Image.file(
                   File(stores[index]['store_image']!),
                   width: 50,

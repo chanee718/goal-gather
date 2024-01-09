@@ -82,6 +82,7 @@ class _StoreDetailScreenState extends State<StoreDetailScreen> {
                   );
                   return;
                 }
+                print(widget.store['store_id']);
                 await updateStore(widget.store['store_id'], _imageFile?.path, _menuController.text, _screenController.text, int.tryParse(_capacity.text)!);
                 // Store 객체를 업데이트합니다.
 

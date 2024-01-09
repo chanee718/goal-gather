@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'AuthService.dart';
 
-const baseUrl = 'http://172.10.7.43:80';
+const baseUrl = 'http://143.248.228.45:3000';
 
 // input: user의 이메일 (AuthService에서 빼서 주면 됨)
 // output: user의 데이터 - user_name, profile_image, user_type
@@ -395,7 +395,7 @@ Future<void> addStore(String storeid, String name, String number, String address
 // input: storeid, img, menu, screen, capacity
 // output: X
 Future<void> updateStore(String storeid, String? image, String menu, String screen, int capacity) async {
-  final url = Uri.parse('$baseUrl/chat/updatestore');
+  final url = Uri.parse('$baseUrl/store/updatestore');
   try {
     var res = await http.put(
         url,

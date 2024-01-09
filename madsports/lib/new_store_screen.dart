@@ -26,8 +26,10 @@ class _NewStoreScreenState extends State<NewStoreScreen> {
   String number = "";
   String address = "";
   dynamic searchedStores;
+  bool showList = true;
 
   Future<void> searchStore(String query) async {
+    showList = true;
     final results = await findStorewithName(query);
     if(results == null) return;
     setState(() {
@@ -72,7 +74,7 @@ class _NewStoreScreenState extends State<NewStoreScreen> {
               onChanged: (value) async => await searchStore(value),
             ),
             // 검색 결과 리스트
-            ListView.builder(
+            showList? ListView.builder(
               shrinkWrap: true,
               itemCount: searchedStores.length,
               itemBuilder: (context, index) {
@@ -85,11 +87,15 @@ class _NewStoreScreenState extends State<NewStoreScreen> {
                     name = searchedStores[index]['place_name'];
                     number = searchedStores[index]['number'];
                     address = searchedStores[index]['address'];
+                    print("$storeid, $name, $number, $address");
                     _searchController.text = name;
+                    setState(() {
+                      showList = false;
+                    });
                   },
                 );
               },
-            ),
+            ): Container(),
             if (_imageFile != null) Image.file(_imageFile!),
             ElevatedButton(
               onPressed: _pickImage,

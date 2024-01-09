@@ -47,10 +47,11 @@ router.get('/findwithname', async (req, res) => {
   });
 
 //가게 정보 업데이트
-router.put('/updatestore', async (req, res) => {   
+router.put('/updatestore', async (req, res) => {  
+    const {storeid, img, menu, screen, capacity} = req.body;
+    console.log(storeid);
     try {
-        const {storeid, img, menu, screen, capacity} = req.body;
-        const changingstore = await db.execute('SELECT * FROM stores WHERE id = ?', [storeid]);
+        const changingstore = await db.execute('SELECT * FROM stores WHERE store_id = ?', [storeid]);
         
         if (changingstore.length === 0) {
             // 가게가 없는 경우 에러 처리 또는 적절한 로직 수행
@@ -119,7 +120,7 @@ router.get('/findrestaurants', async (req, res) => {
 router.post('/addstore', async (req, res) => {
     const {storeid, name, number, address, image, menu, screen, capacity, owner} = req.body;
     try {
-        const [result] = await db.execute('INSERT INTO stores (store_id, store_name, store_number, address, store_image, mainmenu, screen, capacity, owner) VALUES (?, ?, ?, ?, ?, ?, ?)', [storeid, name, number, address, image, menu, screen, capacity, owner]);
+        const [result] = await db.execute('INSERT INTO stores (store_id, store_name, store_image, mainmenu, screen, capacity, owner, store_number, address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [storeid, name, image, menu, screen, capacity, owner, number, address]);
         res.json({ message: '가게가 추가되었습니다.', userId: result.insertId });
     } catch (error) {
         console.error('쿼리 실행 중 에러:', error);
