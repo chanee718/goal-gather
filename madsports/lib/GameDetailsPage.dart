@@ -6,8 +6,8 @@ import 'add_store_screen.dart';
 import 'chat_room_list.dart';
 
 class GameDetailsPage extends StatefulWidget {
-  final String matchTitle;
-  const GameDetailsPage({super.key, required this.matchTitle});
+  final dynamic game_info;
+  const GameDetailsPage({super.key, required this.game_info});
 
   @override
   State<GameDetailsPage> createState() => _GameDetailsPageState();
@@ -29,8 +29,8 @@ class _GameDetailsPageState extends State<GameDetailsPage> {
             child: Row(
               children: [
                 // 왼쪽 팀 사진
-                Expanded(child: Image.asset(
-                  'asset/image/left.jpg',
+                Expanded(child: Image.network(
+                  widget.game_info['homeTeamImage'],
                   width: 50,
                   height: 50,
                 )),
@@ -39,14 +39,14 @@ class _GameDetailsPageState extends State<GameDetailsPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(widget.matchTitle, style: TextStyle(fontSize: 24)),
-                      Text('경기 시간', style: TextStyle(fontSize: 16)),
+                      Text(widget.game_info['homeTeamName'] + ' vs ' +widget.game_info['awayTeamName'], style: TextStyle(fontSize: 24)),
+                      Text(widget.game_info['dateEvent'], style: TextStyle(fontSize: 16)),
                     ],
                   ),
                 ),
                 // 오른쪽 팀 사진
-                Expanded(child: Image.asset(
-                  'asset/image/right.png',
+                Expanded(child: Image.network(
+                  widget.game_info['awayTeamImage'],
                   width: 50,
                   height: 50,
                 )),
@@ -55,7 +55,7 @@ class _GameDetailsPageState extends State<GameDetailsPage> {
           ),
           // 아래쪽 70% 영역 (채팅방 정보)
           Expanded(
-            child: ChatRoomList(get_chat_by_game(widget.matchTitle)),
+            child: ChatRoomList(get_chat_by_game("")),
           ),
         ],
       ),

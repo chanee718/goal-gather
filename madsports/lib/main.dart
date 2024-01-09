@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:madsports/GameDetailsPage.dart';
+import 'package:madsports/functions.dart';
 import 'package:madsports/userinfodrawer.dart';
 import 'login_page.dart';
 import 'package:madsports/sample_query.dart';
@@ -110,7 +111,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         currentDate = currentDate.add(Duration(days: _tabController.index - 6));
       });
     });
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -129,21 +129,30 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           future: AuthService.isLoggedIn(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              return ListView(
-                padding: EdgeInsets.zero,
-                children: userinfo_drawer(
-                  snapshot.data!,
-                  email,
-                  name,
-                  () {
-                    navigateToLoginPage();
+                // isLoggedIn()이 true일 때
+                return FutureBuilder<Map<String, dynamic>?>(
+                  future: AuthService.getUserInfo(),
+                  builder: (context, userInfoSnapshot) {
+                    if (userInfoSnapshot.connectionState == ConnectionState.done) {
+                        Map<String, dynamic>? userInfo = userInfoSnapshot.data;
+                        return ListView(
+                            padding: EdgeInsets.zero,
+                            children: userinfo_drawer(
+                              snapshot.data!,
+                              userInfo?['email'] ?? '로그인 하세요',
+                              userInfo?['name'] ?? '로그인 하세요',
+                                () {
+                                navigateToLoginPage();
+                                }, () {
+                                signOut();
+                                },
+                                context)
+                        );
+                    } else {
+                      return CircularProgressIndicator();
+                    }
                   },
-                  () {
-                    signOut();
-                  },
-                  context
-                ),
-              );
+                );
             } else {
               return CircularProgressIndicator();
             }
@@ -179,24 +188,34 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         DateTime tabDate = currentDate.subtract(Duration(days: 6 - index));
         String formattedDate = DateFormat('yyyy-MM-dd').format(tabDate);
 
-        List<String> game_info = get_game_by_date(tabDate);
-
-        return ListView.builder(
-          itemCount: game_info.length,
-          itemBuilder: (context, index) {
-            return InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => GameDetailsPage(matchTitle: game_info[index]),
-                  ),
-                );
-              },
-              child: ListTile(
-                title: Text(game_info[index]),
-              ),
-            );
+        return FutureBuilder(
+          future: findGamebyDate(formattedDate),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator(); // 로딩 인디케이터 표시
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              dynamic game_info = snapshot.data;
+              return ListView.builder(
+                itemCount: game_info.length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => GameDetailsPage(game_info: game_info[index]),
+                        ),
+                      );
+                    },
+                    child: ListTile(
+                      title: Text(game_info[index]['homeTeamName'] + ' vs ' +game_info[index]['awayTeamName']),
+                    ),
+                  );
+                },
+              );
+            }
           },
         );
       }),
