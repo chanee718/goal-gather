@@ -20,11 +20,11 @@ List<Widget> userinfo_drawer(bool isLogin, String email, String name, LoginCallb
         backgroundImage: AssetImage('asset/image/sample_background.gif'),
       ),
       decoration: const BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('asset/image/naver_logo.png'),
-              fit: BoxFit.cover
-          ),
-          color: Colors.amber
+          // image: DecorationImage(
+          //     image: AssetImage('asset/image/naver_logo.png'),
+          //     fit: BoxFit.cover
+          // ),
+          color: Color.fromARGB(255, 72, 252, 155)
       ),
     ),
     ListTile(

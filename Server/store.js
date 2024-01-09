@@ -144,6 +144,18 @@ router.get('/indb', async (req, res) => {
     }  
   });
 
+//storeid로 store 정보 찾기
+router.get('/find', async (req, res) => {   
+    const {storeId} = req.query;
+    try {
+        const [storeResult] = await db.execute('SELECT * FROM stores WHERE store_id = ?', [storeId]);
+        res.json(storeResult);
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+        res.status(500).json({ error: '서버 오류' });
+    }  
+  });
+
 //유저 소유의 store을 불러오는 기능
 router.get('/mystore', async (req, res) => {   
     const {email} = req.query;

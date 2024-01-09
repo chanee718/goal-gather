@@ -81,10 +81,12 @@ router.get('/gameindate', async (req, res) => {
                 gameDetails.push({
                     game_id: game['id'],
                     startTime: game['start_time'],
+                    gameDate: game['game_date'],
                     homeTeamName: homeTeamRows[0].team_name,
                     homeTeamImage: homeTeamRows[0].team_image,
                     awayTeamName: awayTeamRows[0].team_name,
-                    awayTeamImage: awayTeamRows[0].team_image
+                    awayTeamImage: awayTeamRows[0].team_image,
+                    league: game['league']
                 });
             }
             res.json(gameDetails);

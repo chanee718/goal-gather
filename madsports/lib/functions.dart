@@ -461,7 +461,7 @@ Future<dynamic> findMyStore(String email) async {
 
 // 특정 날짜의 축구 경기들을 불러오는 기능
 // input: date (0000-00-00 의 string 형식 - 포맷팅 필요)
-// output: game_id, startTime(경기 시간), homeTeamName, homeTeamImage, awayTeamName, awayTeamImage
+// output: game_id, startTime(경기 시간), gameDate, homeTeamName, homeTeamImage, awayTeamName, awayTeamImage, league
 Future<dynamic> findGamebyDate(String date) async {
   final url = Uri.parse('$baseUrl/game/gameindate?date=$date');
   try {
@@ -558,3 +558,21 @@ Future<dynamic> gameInDB(String gameID) async {
   }
 }
 
+// store id로 store 정보 받아오기
+// input: storeId
+// output: DB에 들어있으면 true, DB에 없으면 false
+Future<dynamic> findStore(String storeID) async {
+  final url = Uri.parse('$baseUrl/store/find?storeId=$storeID');
+  try {
+    var res = await http.get(url);
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      return data;
+    } else {
+      print('서버로부터 오류 응답. Status Code: ${res.statusCode}');
+      return null;
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+}

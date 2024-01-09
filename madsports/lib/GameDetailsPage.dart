@@ -27,9 +27,13 @@ class _GameDetailsPageState extends State<GameDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('경기 정보')),
+      appBar: AppBar(
+          title: Text('경기 정보', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+          backgroundColor: Color.fromARGB(255, 43, 0, 53),
+          iconTheme: IconThemeData(color: Colors.white),
+      ),
       body: FutureBuilder(
-        future: findChatsbyGame(widget.game_info['id']),
+        future: findChatsbyGame(widget.game_info['game_id']),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -38,20 +42,59 @@ class _GameDetailsPageState extends State<GameDetailsPage> {
             return Column(
               children: [
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.3,
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 43, 0, 53),
+                  ),
+                  height: MediaQuery.of(context).size.height * 0.2,
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Expanded(child: Image.network(widget.game_info['homeTeamImage'], width: 50, height: 50)),
                       Expanded(
+                        flex: 3, // Flex를 조정하여 가운데 열이 더 넓게 보이게 함
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 20.0), // 왼쪽 공간 조정
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.network(widget.game_info['homeTeamImage'], width: 60, height: 60),
+                                SizedBox(height: 15),
+                                Text(widget.game_info['homeTeamName'], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Colors.white)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 4, // 가운데 열을 더 넓게 만들기 위한 flex 값 조정
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(widget.game_info['homeTeamName'] + ' vs ' + widget.game_info['awayTeamName'], style: TextStyle(fontSize: 24)),
-                            Text(widget.game_info['startTime'], style: TextStyle(fontSize: 16)),
+                            Text(widget.game_info['gameDate'], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white)),
+                            SizedBox(height: 15),
+                            Text(widget.game_info['startTime'], style: TextStyle(fontSize: 16, color: Colors.white)),
                           ],
                         ),
                       ),
-                      Expanded(child: Image.network(widget.game_info['awayTeamImage'], width: 50, height: 50)),
+                      Expanded(
+                        flex: 3, // Flex를 조정하여 가운데 열이 더 넓게 보이게 함
+                        child: Padding(
+                          padding: EdgeInsets.only(right: 20.0), // 오른쪽 공간 조정
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.network(widget.game_info['awayTeamImage'], width: 60, height: 60),
+                                SizedBox(height: 15),
+                                Text(widget.game_info['awayTeamName'], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Colors.white)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -132,6 +175,8 @@ class _GameDetailsPageState extends State<GameDetailsPage> {
           );
         },
         child: Icon(Icons.add),
+        backgroundColor: Color.fromARGB(255, 72, 252, 155),
+        shape: CircleBorder()
       ),
     );
   }

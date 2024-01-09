@@ -56,12 +56,12 @@ class ChatRoomItem extends StatelessWidget {
         ElevatedButton(
           onPressed: () {
             // 채팅방 정보 수정 화면으로 이동
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => EditChatRoomScreen(chatRoom),
-              ),
-            );
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => EditChatRoomScreen(chatRoom),
+            //   ),
+            // );
           },
           child: Text('채팅방 수정'),
         ),
