@@ -59,12 +59,24 @@ List<Widget> userinfo_drawer(bool isLogin, String email, String name, LoginCallb
       leading: Icon(Icons.shopping_cart),
       title: Text('My Shop'),
       onTap: () {
-        Navigator.push(
-          con,
-          MaterialPageRoute(
-            builder: (con) => ShopListPage(),
-          ),
-        );
+        if(isLogin == false){
+          Fluttertoast.showToast(
+              msg: "Login First!",
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Colors.redAccent,
+              fontSize: 20,
+              textColor: Colors.white,
+              toastLength: Toast.LENGTH_SHORT
+          );
+        }
+        else {
+          Navigator.push(
+            con,
+            MaterialPageRoute(
+              builder: (con) => ShopListPage(email: email),
+            ),
+          );
+        }
       },
     ),
     ElevatedButton(
