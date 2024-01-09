@@ -5,13 +5,15 @@ import 'dart:io';
 import 'package:madsports/temp_classes.dart';
 
 class EditChatRoomScreen extends StatefulWidget {
-  final ChatRoom chatRoom;
-
-  EditChatRoomScreen(this.chatRoom);
+  dynamic ChatRoom;
+  final Function() onUpdate;
+  EditChatRoomScreen({super.key, required this.ChatRoom, required this.onUpdate});
 
   @override
   State<EditChatRoomScreen> createState() => _EditChatRoomScreenState();
 }
+
+
 
 class _EditChatRoomScreenState extends State<EditChatRoomScreen> {
   // 선택된 이미지를 저장할 변수
