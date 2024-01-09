@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'AuthService.dart';
 
-const baseUrl = 'http://143.248.228.45:3000';
+const baseUrl = 'http://172.10.7.43:80';
 
 // input: user의 이메일 (AuthService에서 빼서 주면 됨)
 // output: user의 데이터 - user_name, profile_image, user_type

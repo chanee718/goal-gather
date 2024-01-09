@@ -116,6 +116,17 @@ class _NewStoreScreenState extends State<NewStoreScreen> {
             // 수용 인원 설정 UI는 추가 구현 필요
             ElevatedButton(
               onPressed: () async {
+                if(_imageFile == null){
+                  Fluttertoast.showToast(
+                      msg: "Please upload image!",
+                      gravity: ToastGravity.BOTTOM,
+                      backgroundColor: Colors.redAccent,
+                      fontSize: 20,
+                      textColor: Colors.white,
+                      toastLength: Toast.LENGTH_SHORT
+                  );
+                  return;
+                }
                 if(int.tryParse(_capacity.text) == null || storeid == "" || name == ""){
                   Fluttertoast.showToast(
                       msg: "Wrong format!",
