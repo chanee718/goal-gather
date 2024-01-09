@@ -29,6 +29,7 @@ class _NewStoreScreenState extends State<NewStoreScreen> {
 
   Future<void> searchStore(String query) async {
     final results = await findStorewithName(query);
+    if(results == null) return;
     setState(() {
       searchedStores = results;
     });
@@ -42,6 +43,7 @@ class _NewStoreScreenState extends State<NewStoreScreen> {
     _screenController = TextEditingController(text: "");
     _capacity = TextEditingController(text: "");
     _imageFile = null;
+    searchedStores = Map();
   }
 
   Future<void> _pickImage() async {
@@ -76,10 +78,11 @@ class _NewStoreScreenState extends State<NewStoreScreen> {
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Text(searchedStores[index]['place_name']),
+                  subtitle: Text(searchedStores[index]['address']),
                   onTap: () {
                     // 선택된 가게 정보로 필드를 채움
-                    storeid = searchedStores[index]['storeid'];
-                    name = searchedStores[index]['name'];
+                    storeid = searchedStores[index]['id'];
+                    name = searchedStores[index]['place_name'];
                     number = searchedStores[index]['number'];
                     address = searchedStores[index]['address'];
                     _searchController.text = name;
