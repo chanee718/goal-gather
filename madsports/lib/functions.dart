@@ -271,12 +271,12 @@ Future<void> goOutChat(String email, int chatid) async {
   final url = Uri.parse('$baseUrl/chat/getout');
   try {
     var res = await http.delete(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'email' : email,
-        'chatid': chatid,
-      })
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'email' : email,
+          'chatid': chatid,
+        })
     );
     if (res.statusCode == 200) {
       // 성공적으로 업데이트 됐을 때의 로직
@@ -357,10 +357,10 @@ Future<dynamic> listofRestaurant(int chatid) async {
 }
 
 // 가게를 DB에 추가
-// input: storeid, name, image, menu, screen, capacity, owner (유저 email)
+// input: storeid, name, number, address, image, menu, screen, capacity, owner (유저 email)
 // output: X
 // 가게 추가 창에서 가게를 선택하면 id와 name을 모두 가져와서 parameter로 넣어줘야 함!
-Future<void> addStore(String storeid, String name, String? image, String menu, String screen, int capacity, String email) async {
+Future<void> addStore(String storeid, String name, String number, String address, String? image, String menu, String screen, int capacity, String email) async {
   final url = Uri.parse('$baseUrl/chat/addstore');
   try {
     var res = await http.post(
@@ -369,6 +369,8 @@ Future<void> addStore(String storeid, String name, String? image, String menu, S
         body: json.encode({
           'storeid': storeid,
           'name': name,
+          'number': number,
+          'address': address,
           'image': image,
           'menu': menu,
           'screen': screen,
@@ -459,7 +461,7 @@ Future<dynamic> findMyStore(String email) async {
 
 // 특정 날짜의 축구 경기들을 불러오는 기능
 // input: date (0000-00-00 의 string 형식 - 포맷팅 필요)
-// output: dateEvent(경기 날짜), homeTeamName, homeTeamImage, awayTeamName, awayTeamImage
+// output: startTime(경기 시간), homeTeamName, homeTeamImage, awayTeamName, awayTeamImage
 Future<dynamic> findGamebyDate(String date) async {
   final url = Uri.parse('$baseUrl/game/gameindate?date=$date');
   try {
