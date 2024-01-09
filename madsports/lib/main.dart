@@ -187,14 +187,23 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       children: List.generate(13, (index) {
         DateTime tabDate = currentDate.subtract(Duration(days: 6 - index));
         String formattedDate = DateFormat('yyyy-MM-dd').format(tabDate);
-
+        // return Column(
+        //   children: [
+        //     ElevatedButton(
+        //       onPressed: () {
+        //         insertGame(formattedDate);
+        //       },
+        //       child: Text("Insert"),
+        //     ),
+        //   ],
+        // );
         return FutureBuilder(
           future: findGamebyDate(formattedDate),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator(); // 로딩 인디케이터 표시
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
+              return Center(child: CircularProgressIndicator()); // 로딩 인디케이터 표시
+            } else if (snapshot.hasError || snapshot.data == null || snapshot.data.length == 0) {
+              return Center(child: Text("No Games Today", style: TextStyle(fontSize: 24)));
             } else {
               dynamic game_info = snapshot.data;
               return ListView.builder(

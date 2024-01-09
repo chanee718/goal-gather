@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'AuthService.dart';
 
-const baseUrl = 'http://172.10.7.43:80';
+const baseUrl = 'http://143.248.228.45:3000';
 
 // input: user의 이메일 (AuthService에서 빼서 주면 됨)
 // output: user의 데이터 - user_name, profile_image, user_type
@@ -461,7 +461,7 @@ Future<dynamic> findMyStore(String email) async {
 
 // 특정 날짜의 축구 경기들을 불러오는 기능
 // input: date (0000-00-00 의 string 형식 - 포맷팅 필요)
-// output: startTime(경기 시간), homeTeamName, homeTeamImage, awayTeamName, awayTeamImage
+// output: game_id, startTime(경기 시간), homeTeamName, homeTeamImage, awayTeamName, awayTeamImage
 Future<dynamic> findGamebyDate(String date) async {
   final url = Uri.parse('$baseUrl/game/gameindate?date=$date');
   try {
@@ -515,3 +515,46 @@ Future<dynamic> preferTeams(String email) async {
     print('Error: $e');
   }
 }
+
+Future<void> insertGame(String date) async {
+  final url = Uri.parse('$baseUrl/game/insert');
+  try {
+    var res = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'date': date
+        })
+    );
+    if (res.statusCode == 200) {
+      // 성공적으로 업데이트 됐을 때의 로직
+      print('Inserted successfully');
+    } else {
+      // 서버에서 오류 응답이 온 경우
+      print('Error making reservation. Status Code: ${res.statusCode}');
+      print('Response Body: ${res.body}');
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+}
+
+// DB에 들어있는 store인지 확인
+// input: storeId
+// output: DB에 들어있으면 true, DB에 없으면 false
+Future<dynamic> gameInDB(String gameID) async {
+  final url = Uri.parse('$baseUrl/store/indb?gameId=$gameID');
+  try {
+    var res = await http.get(url);
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      return data['containDB'];
+    } else {
+      print('서버로부터 오류 응답. Status Code: ${res.statusCode}');
+      return null;
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+}
+

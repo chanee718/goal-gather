@@ -5,7 +5,7 @@ const router = express.Router();
 
 const axios = require('axios');
 
-const kakaoApiKey = 'dd08afc233c178fc1597ea2404dd0c8d';
+const kakaoApiKey = process.env.KAKAOKEY;
 
 //가게 이름으로 음식점 찾기
 router.get('/findwithname', async (req, res) => {
