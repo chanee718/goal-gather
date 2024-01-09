@@ -60,6 +60,7 @@ router.put('/updatestore', async (req, res) => {
         } else {
             // 가게를 찾으면 해당 가게의 정보를 업데이트
             await db.execute('UPDATE stores SET store_image = ?, mainmenu = ?, screen = ?, capacity = ?  WHERE store_id = ?', [img, menu, screen, capacity, storeid]);
+            res.json({ message: '가게가 수정되었습니다.'});
             console.log('가게 정보 업데이트 완료!!!!');
         }
 
