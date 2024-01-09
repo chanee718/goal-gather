@@ -117,9 +117,9 @@ router.get('/findrestaurants', async (req, res) => {
 
 //유저 소유의 가게 정보를 DB에 추가
 router.post('/addstore', async (req, res) => {
-    const {storeid, name, image, menu, screen, capacity, owner} = req.body;
+    const {storeid, name, number, address, image, menu, screen, capacity, owner} = req.body;
     try {
-        const [result] = await db.execute('INSERT INTO stores (store_id, store_name, store_image, mainmenu, screen, capacity, owner) VALUES (?, ?, ?, ?, ?, ?, ?)', [storeid, name, image, menu, screen, capacity, owner]);
+        const [result] = await db.execute('INSERT INTO stores (store_id, store_name, store_number, address, store_image, mainmenu, screen, capacity, owner) VALUES (?, ?, ?, ?, ?, ?, ?)', [storeid, name, number, address, image, menu, screen, capacity, owner]);
         res.json({ message: '가게가 추가되었습니다.', userId: result.insertId });
     } catch (error) {
         console.error('쿼리 실행 중 에러:', error);
