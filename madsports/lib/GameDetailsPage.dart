@@ -5,6 +5,7 @@ import 'package:madsports/add_chat_room_screen.dart';
 import 'package:madsports/edit_chat_room_screen.dart';
 import 'package:madsports/functions.dart';
 import 'package:madsports/info_chat_room_list.dart';
+import 'package:madsports/make_reserve.dart';
 import 'dart:io';
 import 'package:madsports/sample_query.dart';
 
@@ -115,12 +116,12 @@ class _GameDetailsPageState extends State<GameDetailsPage> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
                               chatRooms[index]['creator_email'] == widget.email ? TextButton(
-                                child: Text('Chat Edit'),
-                                onPressed: () {
-                                  Navigator.push(
+                                child: Text('Make Reserve'),
+                                onPressed: () async {
+                                  await Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => EditChatRoomScreen(
+                                      builder: (context) => MakeReserve(
                                         ChatRoom: chatRooms[index],
                                         onUpdate: () {
                                           setState(() {});
@@ -132,8 +133,8 @@ class _GameDetailsPageState extends State<GameDetailsPage> {
                               ) : Container(),
                               TextButton(
                                 child: Text('Chat Info'),
-                                onPressed: () {
-                                  Navigator.push(
+                                onPressed: () async {
+                                  await Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => InfoChatRoomScreen(
