@@ -102,6 +102,7 @@ router.get('/findrestaurants', async (req, res) => {
                         id: place.id,
                         place_name: place.place_name,
                         number: place.phone,
+                        address: place.road_address_name,
                         category: place.category_name,
                     });
                 });

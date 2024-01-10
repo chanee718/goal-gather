@@ -141,7 +141,7 @@ Future<dynamic> findChatsbyGame(int id) async {
 // input: chatid, storeid, time (00:00 형식)
 // 식당 선택 페이지로 넘어올 때 chatid랑 storeid를 계속 넘겨줘야 할듯..!
 // output: 없음
-Future<void> makeReservation(int chatId, String storeId, String time) async {
+Future<void> makeReservation(int chatId, String storename, String storenumber, String stroeaddress, String time) async {
   final url = Uri.parse('$baseUrl/chat/reservation');
   try {
     var res = await http.post(
@@ -149,7 +149,9 @@ Future<void> makeReservation(int chatId, String storeId, String time) async {
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'chatid': chatId,
-          'storeid': storeId,
+          'storename': storename,
+          'storenumber': storenumber,
+          'storeaddress': stroeaddress,
           'time': time,
         })
     );

@@ -13,9 +13,9 @@ List<Widget> userinfo_drawer(bool isLogin, String email, String name, LoginCallb
 
     UserAccountsDrawerHeader(
       accountName: isLogin == false ?
-      const Text('로그인 필요', style: TextStyle(color: Colors.white),) : Text(name, style: const TextStyle(color: Colors.white),),
+      const Text('로그인 필요', style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 43, 0, 53)),) : Text(name, style: const TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 43, 0, 53)),),
       accountEmail: isLogin == false ?
-      const Text('로그인 필요', style: TextStyle(color: Colors.white),) : Text(email, style: const TextStyle(color: Colors.white),),
+      const Text('로그인 필요', style: TextStyle(color: Color.fromARGB(255, 43, 0, 53)),) : Text(email, style: const TextStyle(color: Color.fromARGB(255, 43, 0, 53)),),
       currentAccountPicture: const CircleAvatar(
         backgroundImage: AssetImage('asset/image/sample_background.gif'),
       ),
@@ -28,8 +28,8 @@ List<Widget> userinfo_drawer(bool isLogin, String email, String name, LoginCallb
       ),
     ),
     ListTile(
-      leading: Icon(Icons.sports),
-      title: Text('My favorite Team'),
+      leading: Icon(Icons.sports_soccer_sharp, color: Color.fromARGB(255, 43, 0, 53),),
+      title: Text('관심 팀', style: TextStyle(color: Color.fromARGB(255, 43, 0, 53)),),
       onTap: (){
         Fluttertoast.showToast(
             msg: "edit team",
@@ -42,8 +42,8 @@ List<Widget> userinfo_drawer(bool isLogin, String email, String name, LoginCallb
       },
     ),
     ListTile(
-      leading: Icon(Icons.chat),
-      title: Text('My chattings'),
+      leading: Icon(Icons.chat, color: Color.fromARGB(255, 43, 0, 53)),
+      title: Text('참여 중인 채팅방', style: TextStyle(color: Color.fromARGB(255, 43, 0, 53))),
       onTap: (){
         Fluttertoast.showToast(
             msg: "edit chat",
@@ -56,8 +56,8 @@ List<Widget> userinfo_drawer(bool isLogin, String email, String name, LoginCallb
       },
     ),
     ListTile(
-      leading: Icon(Icons.shopping_cart),
-      title: Text('My Shop'),
+      leading: Icon(Icons.store, color: Color.fromARGB(255, 43, 0, 53)),
+      title: Text('내 음식점', style: TextStyle(color: Color.fromARGB(255, 43, 0, 53))),
       onTap: () {
         if(isLogin == false){
           Fluttertoast.showToast(
@@ -79,16 +79,28 @@ List<Widget> userinfo_drawer(bool isLogin, String email, String name, LoginCallb
         }
       },
     ),
-    ElevatedButton(
-        onPressed: () {
-          if (isLogin == false) {
-            onLoginPressed();
-          }
-          else {
-            onLogoutPressed();
-          }
-        },
-        child: isLogin == false ? const Text('Login') : const Text('Logout')
-    )
+    Expanded(
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: ElevatedButton(
+            onPressed: () {
+              if (isLogin == false) {
+                onLoginPressed();
+              } else {
+                onLogoutPressed();
+              }
+            },
+            child: isLogin == false ? const Text('Login', style: TextStyle(color: Color.fromARGB(255, 72, 252, 155))) : const Text('Logout', style: TextStyle(color: Colors.red)),
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0), // 약간 둥근 모서리 설정
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
   ];
 }

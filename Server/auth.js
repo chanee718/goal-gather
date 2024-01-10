@@ -46,7 +46,6 @@ router.put('/user-edit', async (req, res) => {
     } else {
       // 이미 등록된 사용자인 경우
       await db.execute('UPDATE users SET user_name = ?, profile_image = ?, user_type = ? WHERE user_email = ?', [username, profileImage, userType, email]);
-      console.log(rows[0].user_id);
     }
   } catch (error) {
     console.error('user edit 쿼리 실행 중 에러:', error);

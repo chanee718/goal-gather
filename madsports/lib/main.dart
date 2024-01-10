@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(10, 72, 252, 155)),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 72, 252, 155)),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Goal Gather'),
@@ -123,11 +123,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+        title: Text(widget.title, style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 43, 0, 53))),
         actions: <Widget>[
           IconButton(
             padding: EdgeInsets.only(right: 16.0),
-            icon: Icon(Icons.calendar_today),
+            color: Color.fromARGB(255, 43, 0, 53),
+            icon: Icon(Icons.insert_invitation),
             onPressed: () {
               _goToToday();
             },

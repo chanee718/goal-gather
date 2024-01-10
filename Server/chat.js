@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/newchat', async (req, res) => {
     const { email, game, name, img, region, capacity, auth, link } = req.body;
     try {
-      const [chatResult] = await db.execute('INSERT INTO chats (creator_email, games_id, chat_name, chat_image, region, capacity, partici_auth, chat_link, reserved_store_id, reserve_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [email, game, name, img, region, capacity, auth, link, null, null]);
+      const [chatResult] = await db.execute('INSERT INTO chats (creator_email, games_id, chat_name, chat_image, region, capacity, partici_auth, chat_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [email, game, name, img, region, capacity, auth, link]);
       const chatId = chatResult.insertId;
       await db.execute('INSERT INTO users_chats (user_email, chat_id) VALUES (?, ?)', [email, chatId]);
 
@@ -38,7 +38,7 @@ router.get('/findchat', async (req, res) => {
 // 주소: /chat/reservation
 router.put('/reservation', async (req, res) => {   
     try {
-      const {chatid, storeid, time} = req.body;
+      const {chatid, storename, storenumber, storeaddress, time} = req.body;
       const chatroom = await db.execute('SELECT * FROM chats WHERE id = ?', [chatid]);
       
       if (chatroom.length === 0) {
@@ -47,7 +47,7 @@ router.put('/reservation', async (req, res) => {
         return;
       } else {
         // 채팅방을 찾으면 해당 채팅방의 reserved_store_id를 업데이트
-        await db.execute('UPDATE chats SET reserved_store_id = ?, reserve_time = ? WHERE id = ?', [storeid, time, chatid]);
+        await db.execute('UPDATE chats SET reserved_store_name = ?, reserved_number = ?, reserved_address = ?, reserve_time = ? WHERE id = ?', [storename, storenumber, storeaddress, time, chatid]);
         console.log('예약 식당 업데이트 완료!!!!');
       }
 

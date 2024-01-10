@@ -4,6 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'AuthService.dart';
+import 'package:madsports/UserMoreInfo.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -13,7 +14,24 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String test = '3000';
 
-  void signInWithNaver() async {
+  void navigateToMoreUserInfo(String email, String? name) async {
+    if (mounted) {
+      await Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MoreUserInfo(
+            email: email,
+            base_name: name,
+            onUpdate: () {
+              setState(() {});
+            },
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> signInWithNaver() async {
 
     final url = Uri.parse('http://172.10.7.43:80/auth/google-login');
     final NaverLoginResult result = await FlutterNaverLogin.logIn();
@@ -40,10 +58,9 @@ class _LoginPageState extends State<LoginPage> {
         var flag = data['flag'];
         if (flag == 1) { // 새로운 계정인지 확인
           print("new account");
-
-          await Future.delayed(Duration.zero, () {
-            Navigator.pop(context);
-          });
+          if(mounted){
+            navigateToMoreUserInfo(result.account.email, result.account.name);
+          }
         } else { // 기존 계정인지 확인
           print("existing account");
 
@@ -55,6 +72,7 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
   }
+
 
   Future<void> signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -83,6 +101,10 @@ class _LoginPageState extends State<LoginPage> {
         var flag = data['flag'];
         if (flag == 1) {  // 새로운 계정인지 확인
           print("new account");
+          if(mounted){
+            navigateToMoreUserInfo(googleUser.email, googleUser.displayName);
+          }
+
         } else {          // 기존 계정인지 확인
           print("existing account");
 
