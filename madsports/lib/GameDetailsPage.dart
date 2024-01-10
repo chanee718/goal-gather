@@ -109,40 +109,42 @@ class _GameDetailsPageState extends State<GameDetailsPage> {
                         children: <Widget>[
                           ListTile(
                             title: Text('Members: ${chatRooms[index]['capacity']}'),
-                            subtitle: Text('Reserved: ${chatRooms[index]['reserve_time'] == '' ? "No" : "Yes"}'),
+                            subtitle: Text('Reserved: ${chatRooms[index]['reserve_time'] == null || chatRooms[index]['reserve_time'] == ''? "No" : "Yes"}'),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
+                              chatRooms[index]['creator_email'] == widget.email ? TextButton(
+                                child: Text('Chat Edit'),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EditChatRoomScreen(
+                                        ChatRoom: chatRooms[index],
+                                        onUpdate: () {
+                                          setState(() {});
+                                          },
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ) : Container(),
                               TextButton(
                                 child: Text('Chat Info'),
                                 onPressed: () {
-                                  if (chatRooms[index]['creator_email'] == widget.email) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => EditChatRoomScreen(
-                                          ChatRoom: chatRooms[index],
-                                          onUpdate: () {
-                                            setState(() {});
-                                          },
-                                        ),
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => InfoChatRoomScreen(
+                                        ChatRoom: chatRooms[index],
+                                        email: widget.email,
+                                        onUpdate: () {
+                                          setState(() {});
+                                        },
                                       ),
-                                    );
-                                  } else {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => InfoChatRoomScreen(
-                                          ChatRoom: chatRooms[index],
-                                          email: widget.email,
-                                          onUpdate: () {
-                                            setState(() {});
-                                          },
-                                        ),
-                                      ),
-                                    );
-                                  }
+                                    ),
+                                  );
                                 },
                               ),
                               SizedBox(width: 8),
@@ -167,6 +169,7 @@ class _GameDetailsPageState extends State<GameDetailsPage> {
             MaterialPageRoute(
               builder: (context) => AddChatRoomScreen(
                 email: widget.email,
+                game: widget.game_info['game_id'],
                 onUpdate: () {
                   setState(() {});
                 },

@@ -273,12 +273,12 @@ Future<void> goOutChat(String email, int chatid) async {
   final url = Uri.parse('$baseUrl/chat/getout');
   try {
     var res = await http.delete(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'email' : email,
-        'chatid': chatid,
-      })
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'email' : email,
+          'chatid': chatid,
+        })
     );
     if (res.statusCode == 200) {
       // 성공적으로 업데이트 됐을 때의 로직

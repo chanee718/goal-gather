@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:madsports/temp_classes.dart';
 
 import 'edit_chat_room_screen.dart';
-
+/*
 class ChatRoomList extends StatelessWidget {
 
   List<ChatRoom> chatRooms;
@@ -69,3 +69,5 @@ class ChatRoomItem extends StatelessWidget {
     );
   }
 }
+
+ */
