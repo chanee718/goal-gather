@@ -144,7 +144,7 @@ Future<dynamic> findChatsbyGame(int id) async {
 Future<void> makeReservation(int chatId, String storename, String storenumber, String stroeaddress, String time) async {
   final url = Uri.parse('$baseUrl/chat/reservation');
   try {
-    var res = await http.put(
+    var res = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
@@ -250,7 +250,6 @@ Future<void> joinChat(String email, int chatid) async {
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
-          'email': email,
           'chatid': chatid,
         })
     );
@@ -344,7 +343,7 @@ Future<dynamic> findStorewithName(String findkey) async {
 // output: id(장소 id), place_name (가게 이름), number (가게 전화번호), category(가게 종류)
 // 카카오에서 id로 장소를 찾는 기능을 지원하지 않음!
 Future<dynamic> listofRestaurant(int chatid) async {
-  final url = Uri.parse('$baseUrl/store/findrestaurants?chatId=$chatid');
+  final url = Uri.parse('$baseUrl/chat/findrestaurants?chatId=$chatid');
   try {
     var res = await http.get(url);
     if (res.statusCode == 200) {

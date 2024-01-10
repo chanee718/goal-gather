@@ -1,5 +1,7 @@
 const express = require('express');
 const db = require('./db');
+const multer = require('multer');
+const upload = multer({ dest: 'public/uploads/' });
 
 const router = express.Router();
 require('dotenv').config();
@@ -7,6 +9,18 @@ require('dotenv').config();
 const axios = require('axios');
 
 const kakaoApiKey = process.env.KAKAOKEY;
+
+
+router.post('/upload', upload.single('image'), (req, res) => {
+    if (req.file) {
+      // 파일 경로를 클라이언트에 반환
+      const filePath = req.file.path;
+      console.log(filePath);
+      res.json({ fileUrl: filePath });
+    } else {
+      res.status(400).json({ error: '파일이 업로드되지 않음' });
+    }
+  });
 
 //가게 이름으로 음식점 찾기
 router.get('/findwithname', async (req, res) => {
@@ -120,10 +134,20 @@ router.get('/findrestaurants', async (req, res) => {
 
 
 //유저 소유의 가게 정보를 DB에 추가
-router.post('/addstore', async (req, res) => {
-    const {storeid, name, number, address, image, menu, screen, capacity, owner} = req.body;
+router.post('/addstore', upload.single('profileImage'), async (req, res) => {
+    const { storeid, name, number, address, menu, screen, capacity, owner } = req.body;
+    const image = req.file ? req.file.path : null; // 이미지 파일이 있다면 파일 경로를 사용
+
+    // 문자열을 정수로 변환
+    const parsedCapacity = parseInt(capacity, 10);
+
+    // isNaN을 사용하여 정수 변환 여부를 확인
+    if (isNaN(parsedCapacity)) {
+        return res.status(400).json({ error: 'Invalid capacity value' });
+    }
+
     try {
-        const [result] = await db.execute('INSERT INTO stores (store_id, store_name, store_image, mainmenu, screen, capacity, owner, store_number, address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [storeid, name, image, menu, screen, capacity, owner, number, address]);
+        const [result] = await db.execute('INSERT INTO stores (store_id, store_name, store_number, address, store_image, mainmenu, screen, capacity, owner) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [storeid, name, number, address, image, menu, screen, parsedCapacity, owner]);
         res.json({ message: '가게가 추가되었습니다.', userId: result.insertId });
     } catch (error) {
         console.error('쿼리 실행 중 에러:', error);

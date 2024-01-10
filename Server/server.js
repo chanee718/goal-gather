@@ -19,6 +19,9 @@ app.use('/store', storeRoutes);
 app.use('/game', gameRoutes);
 app.use('/team', teamRoutes);
 
+
+app.use(express.static(__dirname + '/public/uploads'));
+
 //특정 email을 받았을 때 그 email을 가진 user의 data를 돌려주는 query
 app.get('/users', async (req, res) => {   
   const email = req.query.email;

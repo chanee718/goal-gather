@@ -1,7 +1,23 @@
 const express = require('express');
 const db = require('./db');
+const multer = require('multer');
 
+const app = express();
 const router = express.Router();
+const upload = multer({ dest: 'public/uploads/' });
+
+
+// 이미지 업로드를 위한 /upload 엔드포인트
+router.post('/upload', upload.single('image'), (req, res) => {
+  if (req.file) {
+    // 파일 경로를 클라이언트에 반환
+    const filePath = req.file.path;
+    res.json({ fileUrl: filePath });
+  } else {
+    res.status(400).json({ error: '파일이 업로드되지 않음' });
+  }
+});
+
 
 //로그인 작업
 router.post('/google-login', async (req, res) => {
@@ -30,9 +46,10 @@ router.post('/google-login', async (req, res) => {
 });
 
 //유저 기본 정보 추가 기입을 위한 query
-router.put('/user-edit', async (req, res) => {   
+router.put('/user-edit', upload.single('profileImage'),  async (req, res) => {   
   try {
-    const { email, username, profileImage, userType } = req.body;
+    const { email, username, userType } = req.body;
+    let profileImagePath = req.file ? req.file.path : null;
 
     console.log('user edit:', email, username);
 
@@ -45,7 +62,7 @@ router.put('/user-edit', async (req, res) => {
       return;
     } else {
       // 이미 등록된 사용자인 경우
-      await db.execute('UPDATE users SET user_name = ?, profile_image = ?, user_type = ? WHERE user_email = ?', [username, profileImage, userType, email]);
+      await db.execute('UPDATE users SET user_name = ?, profile_image = ?, user_type = ? WHERE user_email = ?', [username, profileImagePath, userType, email]);
       res.json({});
     }
   } catch (error) {

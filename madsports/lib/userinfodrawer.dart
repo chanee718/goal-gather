@@ -90,28 +90,30 @@ List<Widget> userinfo_drawer(bool isLogin, String email, String name, LoginCallb
         }
       },
     ),
-    Expanded(
-      child: Align(
+    Align(
         alignment: Alignment.bottomCenter,
         child: Padding(
           padding: EdgeInsets.all(8.0),
-          child: ElevatedButton(
-            onPressed: () {
-              if (isLogin == false) {
-                onLoginPressed();
-              } else {
-                onLogoutPressed();
-              }
-            },
-            child: isLogin == false ? const Text('Login', style: TextStyle(color: Color.fromARGB(255, 72, 252, 155))) : const Text('Logout', style: TextStyle(color: Colors.red)),
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0), // 약간 둥근 모서리 설정
+          child: Container(
+            width: double.infinity,
+            child:ElevatedButton(
+              onPressed: () {
+                if (isLogin == false) {
+                  onLoginPressed();
+                } else {
+                  onLogoutPressed();
+                }
+              },
+              child: isLogin == false ? const Text('Login', style: TextStyle(color: Colors.white)) : const Text('Logout', style: TextStyle(color: Colors.red)),
+              style: ElevatedButton.styleFrom(
+                primary: Color.fromARGB(255, 43, 0, 53),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0), // 약간 둥근 모서리 설정
+                ),
               ),
             ),
           ),
         ),
       ),
-    ),
   ];
 }
