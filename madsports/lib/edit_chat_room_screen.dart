@@ -117,8 +117,13 @@ class _EditChatRoomScreenState extends State<EditChatRoomScreen> {
                             number = list_res[index]['number'];
                             category = list_res[index]['category'];
                             _pre_str = "예약 식당: ${name}";
+                            print(storeid);
+                            print(containedDB(storeid));
+                            dynamic cDB = await containedDB(storeid);
+                            print(cDB);
 
-                            if (containedDB(storeid) == false) {
+                            if (cDB == false) {
+                              print("SSSSSSSSSSSSSSSSSSS ${storeid}");
                               addStore(
                                   storeid,
                                   name,
@@ -191,6 +196,7 @@ class _EditChatRoomScreenState extends State<EditChatRoomScreen> {
                   );
                   return;
                 }
+                // if(containedDB(storeid) == false) await addStore(storeid, name, number, address, image, menu, screen, capacity, email)
                 await makeReservation(widget.ChatRoom['id'], storeid, _timeController.text);
                 await updateChat(widget.ChatRoom['id'], _nameController.text, _imageFile?.path, widget.ChatRoom['region'], int.tryParse(_capacity.text)!, _authController.text, _linkController.text);
                 // Store 객체를 업데이트합니다.

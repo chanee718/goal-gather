@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:madsports/ShopListPage.dart';
+import 'package:madsports/search_pref_team_screen.dart';
 
 import 'AuthService.dart';
 
@@ -31,14 +32,24 @@ List<Widget> userinfo_drawer(bool isLogin, String email, String name, LoginCallb
       leading: Icon(Icons.sports),
       title: Text('My favorite Team'),
       onTap: (){
-        Fluttertoast.showToast(
-            msg: "edit team",
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.redAccent,
-            fontSize: 20,
-            textColor: Colors.white,
-            toastLength: Toast.LENGTH_SHORT
-        );
+        if(isLogin == false){
+          Fluttertoast.showToast(
+              msg: "Login First!",
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Colors.redAccent,
+              fontSize: 20,
+              textColor: Colors.white,
+              toastLength: Toast.LENGTH_SHORT
+          );
+        }
+        else {
+          Navigator.push(
+            con,
+            MaterialPageRoute(
+              builder: (con) => PrefTeamScreen(email: email),
+            ),
+          );
+        }
       },
     ),
     ListTile(

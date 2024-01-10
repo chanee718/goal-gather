@@ -138,9 +138,8 @@ class _NewStoreScreenState extends State<NewStoreScreen> {
                   );
                   return;
                 }
-                dynamic checkDB = await containedDB(storeid);
-                if(checkDB == false) await addStore(storeid, name, number, address, _imageFile?.path, _menuController.text, _screenController.text, int.tryParse(_capacity.text)!, widget.email);
-                else await updateStore(storeid, _imageFile?.path, _menuController.text, _screenController.text, int.tryParse(_capacity.text)!);
+                await addStore(storeid, name, number, address, _imageFile?.path, _menuController.text, _screenController.text, int.tryParse(_capacity.text)!, widget.email);
+                await updateStore(storeid, _imageFile?.path, _menuController.text, _screenController.text, int.tryParse(_capacity.text)!);
                 // Store 객체를 업데이트합니다.
 
                 // Callback 함수를 호출하여 상태를 업데이트합니다.

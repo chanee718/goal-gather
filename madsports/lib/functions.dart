@@ -141,7 +141,7 @@ Future<dynamic> findChatsbyGame(int id) async {
 // input: chatid, storeid, time (00:00 형식)
 // 식당 선택 페이지로 넘어올 때 chatid랑 storeid를 계속 넘겨줘야 할듯..!
 // output: 없음
-Future<void> makeReservation(int chatId, String storeId, String time) async {
+Future<void> makeReservation(int chatId, String storename, String storenumber, String stroeaddress, String time) async {
   final url = Uri.parse('$baseUrl/chat/reservation');
   try {
     var res = await http.post(
@@ -149,7 +149,9 @@ Future<void> makeReservation(int chatId, String storeId, String time) async {
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'chatid': chatId,
-          'storeid': storeId,
+          'storename': storename,
+          'storenumber': storenumber,
+          'storeaddress': stroeaddress,
           'time': time,
         })
     );
@@ -248,7 +250,6 @@ Future<void> joinChat(String email, int chatid) async {
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
-          'email' : email,
           'chatid': chatid,
         })
     );
@@ -342,7 +343,7 @@ Future<dynamic> findStorewithName(String findkey) async {
 // output: id(장소 id), place_name (가게 이름), number (가게 전화번호), category(가게 종류)
 // 카카오에서 id로 장소를 찾는 기능을 지원하지 않음!
 Future<dynamic> listofRestaurant(int chatid) async {
-  final url = Uri.parse('$baseUrl/store/findrestaurants?chatId=$chatid');
+  final url = Uri.parse('$baseUrl/chat/findrestaurants?chatId=$chatid');
   try {
     var res = await http.get(url);
     if (res.statusCode == 200) {
