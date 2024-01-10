@@ -84,7 +84,7 @@ router.get('/findrestaurants', async (req, res) => {
     
             const response = await axios.get(apiUrl, {
             params: {
-                query: `${chatRegion} 맛집`,
+                query: `${chatRegion}`,
                 category_group_code: 'FD6',
             },
             headers: {
@@ -101,6 +101,7 @@ router.get('/findrestaurants', async (req, res) => {
                         id: place.id,
                         place_name: place.place_name,
                         number: place.phone,
+                        address: place.road_address_name,
                         category: place.category_name,
                     });
                 });

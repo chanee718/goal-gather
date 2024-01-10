@@ -13,7 +13,7 @@ router.post('/newchat', async (req, res) => {
       await db.execute('INSERT INTO users_chats (user_email, chat_id) VALUES (?, ?)', [email, chatId]);
 
       console.log('채팅방이 생성되었습니다!');
-
+      res.json({ });
     } catch (error) {
       console.error('new chat 쿼리 실행 중 에러:', error);
       res.status(500).json({ error: '서버 오류' });
@@ -48,6 +48,7 @@ router.put('/reservation', async (req, res) => {
       } else {
         // 채팅방을 찾으면 해당 채팅방의 reserved_store_id를 업데이트
         await db.execute('UPDATE chats SET reserved_store_id = ?, reserve_time = ? WHERE id = ?', [storeid, time, chatid]);
+        res.json({});
         console.log('예약 식당 업데이트 완료!!!!');
       }
 
@@ -112,6 +113,7 @@ router.put('/updatechat', async (req, res) => {
         } else {
         // 채팅방을 찾으면 해당 채팅방의 정보를 업데이트
         await db.execute('UPDATE chats SET chat_name = ?, chat_image = ?, region = ?, capacity = ?, partici_auth = ?, chat_link = ? WHERE id = ?', [name, img, region, capacity, auth, link, chatid]);
+        res.json({});
         console.log('채팅방 정보 업데이트 완료!!!!');
       }
     } catch (error) {
@@ -123,9 +125,12 @@ router.put('/updatechat', async (req, res) => {
 //특정 유저가 채팅방에 참여
 router.post('/joinchat', async (req, res) => {
     const { email, chatid } = req.body;
+    console.log(email);
+    console.log(chatid);
     try {
-      await db.execute('INSERT INTO users_chats (user_email, chatid) VALUES (?, ?)', [email, chatid]);
+      await db.execute('INSERT INTO users_chats (user_email, chat_id) VALUES (?, ?)', [email, chatid]);
 
+      res.json({});
       console.log('채팅방에 참여하였습니다!');
 
     } catch (error) {
@@ -137,6 +142,8 @@ router.post('/joinchat', async (req, res) => {
 
 router.delete('/getout', async (req, res) => {
     const { email, chatid } = req.body;
+    console.log(email);
+    console.log(chatid);
     try {
         const chatroom = await db.execute('SELECT * FROM users_chats WHERE user_email = ? AND chat_id = ?', [email, chatid]);
         if (chatroom.length === 0) {
@@ -146,6 +153,7 @@ router.delete('/getout', async (req, res) => {
         } else {
             // 채팅방을 찾으면 해당 채팅방의 정보를 업데이트
             await db.execute('DELETE FROM users_chats WHERE user_email = ? AND chat_id = ?', [email, chatid]);
+            res.json({});
             console.log('채팅방에서 나갔습니다!');
         }
 
@@ -167,6 +175,7 @@ router.delete('/deletechat', async (req, res) => {
         } else {
             // 채팅방을 찾으면 해당 채팅방의 정보를 업데이트
             await db.execute('DELETE FROM chats WHERE chat_id = ?', [chatid]);
+            res.json({});
             console.log('채팅방이 삭제되었습니다');
         }
 
