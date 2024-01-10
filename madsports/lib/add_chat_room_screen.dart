@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+import 'package:madsports/functions.dart';
+
 class AddChatRoomScreen extends StatefulWidget {
   final String email;
+  final int game;
   final Function() onUpdate;
-  const AddChatRoomScreen({super.key, required this.email, required this.onUpdate});
+  const AddChatRoomScreen({super.key, required this.email, required this.game, required this.onUpdate});
 
   @override
   State<AddChatRoomScreen> createState() => _AddChatRoomScreenState();
@@ -14,82 +18,106 @@ class AddChatRoomScreen extends StatefulWidget {
 
 class _AddChatRoomScreenState extends State<AddChatRoomScreen> {
   // 선택된 이미지를 저장할 변수
-  File? _selectedImage;
+  final _picker = ImagePicker();
+  late File? _imageFile;
+  late TextEditingController _nameController = TextEditingController();
+  late TextEditingController _linkController;
+  late TextEditingController _authController;
+  late TextEditingController _regionController;
+  late TextEditingController _capacity;
 
-  // ImagePicker 인스턴스 생성
-  final ImagePicker _picker = ImagePicker();
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: "");
+    _linkController = TextEditingController(text: "");
+    _authController = TextEditingController(text: "");
+    _regionController = TextEditingController(text: "");
+    _capacity = TextEditingController(text: "");
+    _imageFile = null;
+  }
 
-  // 이미지 선택 메서드
-  Future _pickImage() async {
+  Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
-        _selectedImage = File(pickedFile.path);
+        _imageFile = File(pickedFile.path);
       });
     }
   }
 
-  // 채팅방 정보를 저장할 변수들
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _locationController = TextEditingController();
-  TextEditingController _joinConditionController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('채팅방 추가')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      appBar: AppBar(
+        title: Text('가게 상세 정보'),
+      ),
+      body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // 이미지 선택 부분
-            GestureDetector(
-              onTap: _pickImage,
-              child: Container(
-                height: 150,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: _selectedImage != null
-                    ? Image.file(
-                  _selectedImage!,
-                  fit: BoxFit.cover,
-                )
-                    : Icon(Icons.add_a_photo, size: 50, color: Colors.grey),
-              ),
+          children: <Widget>[
+            // 검색 필드
+            // 검색 결과 리스트
+            if (_imageFile != null) Image.file(_imageFile!),
+            ElevatedButton(
+              onPressed: _pickImage,
+              child: Text('채팅방 사진 변경'),
             ),
-            SizedBox(height: 16),
-
-            // 채팅방 이름 입력 필드
-            TextFormField(
+            TextField(
               controller: _nameController,
-              decoration: InputDecoration(labelText: '채팅방 이름'),
+              decoration: InputDecoration(labelText: '채팅방 제목'),
             ),
-            SizedBox(height: 16),
-
-            // 채팅방 지역 입력 필드
-            TextFormField(
-              controller: _locationController,
-              decoration: InputDecoration(labelText: '채팅방 지역'),
-            ),
-            SizedBox(height: 16),
-
-            // 참여 조건 입력 필드
-            TextFormField(
-              controller: _joinConditionController,
+            TextField(
+              controller: _authController,
               decoration: InputDecoration(labelText: '참여 조건'),
             ),
-            SizedBox(height: 16),
-
-            // 추가 버튼
+            TextField(
+              controller: _linkController,
+              decoration: InputDecoration(labelText: '채팅방 url'),
+            ),
+            TextField(
+              controller: _regionController,
+              decoration: InputDecoration(labelText: '지역'),
+            ),
+            TextField(
+              controller: _capacity,
+              decoration: InputDecoration(labelText: '채팅방 인원'),
+            ),
+            // 수용 인원 설정 UI는 추가 구현 필요
             ElevatedButton(
-              onPressed: () {
-                // 채팅방 추가 로직 추가
+              onPressed: () async {
+                if(_imageFile == null){
+                  Fluttertoast.showToast(
+                      msg: "Please upload image!",
+                      gravity: ToastGravity.BOTTOM,
+                      backgroundColor: Colors.redAccent,
+                      fontSize: 20,
+                      textColor: Colors.white,
+                      toastLength: Toast.LENGTH_SHORT
+                  );
+                  return;
+                }
+                if(int.tryParse(_capacity.text) == null){
+                  Fluttertoast.showToast(
+                      msg: "Wrong format!",
+                      gravity: ToastGravity.BOTTOM,
+                      backgroundColor: Colors.redAccent,
+                      fontSize: 20,
+                      textColor: Colors.white,
+                      toastLength: Toast.LENGTH_SHORT
+                  );
+                  return;
+                }
+                await createNewChat(widget.email, widget.game, _nameController.text, _imageFile?.path, _regionController.text, int.tryParse(_capacity.text)! , _authController.text, _linkController.text);
+                // Store 객체를 업데이트합니다.
+
+                // Callback 함수를 호출하여 상태를 업데이트합니다.
+                widget.onUpdate();
+
+                // 초기 화면으로 돌아갑니다.
+                Navigator.pop(context);
               },
-              child: Text('추가하기'),
+              child: Text('정보 저장'),
             ),
           ],
         ),
