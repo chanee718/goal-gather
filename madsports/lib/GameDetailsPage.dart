@@ -9,7 +9,6 @@ import 'package:madsports/make_reserve.dart';
 import 'dart:io';
 import 'package:madsports/sample_query.dart';
 
-import 'add_store_screen.dart';
 import 'chat_room_list.dart';
 
 class GameDetailsPage extends StatefulWidget {
@@ -104,7 +103,12 @@ class _GameDetailsPageState extends State<GameDetailsPage> {
                     itemCount: chatRooms.length,
                     itemBuilder: (context, index) {
                       return ExpansionTile(
-                        leading: Image.file(File(chatRooms[index]['chat_image'])),
+                        leading: Image(
+                          image: AssetImage('asset/image/naver_logo.png'),
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        ),
                         title: Text(chatRooms[index]['chat_name']),
                         subtitle: Text('Location: ${chatRooms[index]['region']}'),
                         children: <Widget>[

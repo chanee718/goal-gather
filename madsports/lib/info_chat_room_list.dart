@@ -46,7 +46,7 @@ class _InfoChatRoomScreenState extends State<InfoChatRoomScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Chat Room Details"),
+        title: Text("채팅방 세부 정보"),
         actions: <Widget>[
           widget.ChatRoom['creator_email'] == widget.email? IconButton(
             icon: Icon(Icons.edit),
@@ -73,11 +73,11 @@ class _InfoChatRoomScreenState extends State<InfoChatRoomScreen> {
       ),
       body: Column(
         children: <Widget>[
-          Expanded(
-            flex: 4, // 상단 40%
-            child: Image.file(
-              File(widget.ChatRoom['chat_image']), // 채팅방 사진 URL
-              fit: BoxFit.cover,
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Image.asset('asset/image/naver_logo.png', width: 200, height: 200),
             ),
           ),
           Expanded(
@@ -88,11 +88,11 @@ class _InfoChatRoomScreenState extends State<InfoChatRoomScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text("Chat Room Name : ${widget.ChatRoom['chat_name']}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  Text("Location: ${widget.ChatRoom['region']}", style: TextStyle(fontSize: 16)),
-                  Text("Join Conditions: ${widget.ChatRoom['partici_auth']}", style: TextStyle(fontSize: 16)),
+                  Text("채팅방 이름 : ${widget.ChatRoom['chat_name']}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text("지역: ${widget.ChatRoom['region']}", style: TextStyle(fontSize: 16)),
+                  Text("참여 조건: ${widget.ChatRoom['partici_auth']}", style: TextStyle(fontSize: 16)),
                   HyperlinkWidget(url: widget.ChatRoom['chat_link'], text: "Chat Room Link"),
-                  Text("Members: ${widget.ChatRoom['capacity']}", style: TextStyle(fontSize: 16)),
+                  Text("채팅방 최대 인원: ${widget.ChatRoom['capacity']}", style: TextStyle(fontSize: 16)),
                   Text(
                       widget.ChatRoom['reserved_store_name'] == null ? "예약된 식당: 없음" : "예약된 식당: ${widget.ChatRoom['reserved_store_name']}",
                       style: TextStyle(fontSize: 16)

@@ -6,7 +6,6 @@ import 'package:madsports/store_detail_screen.dart';
 import 'package:madsports/temp_classes.dart';
 import 'dart:io';
 
-import 'add_store_screen.dart';
 
 
 class ShopListPage extends StatefulWidget {
@@ -40,14 +39,12 @@ class _ShopListPageState extends State<ShopListPage> {
             itemCount: stores.length,
             itemBuilder: (context, index) {
               return ListTile(
-                leading: stores[index]['store_image'] != null
-                    ? Image.file(
-                  File(stores[index]['store_image']!),
+                leading: Image(
+                  image: AssetImage('asset/image/naver_logo.png'),
                   width: 50,
                   height: 50,
                   fit: BoxFit.cover,
-                )
-                    : Container(),
+                ),
                 title: Text(stores[index]['store_name']),
                 subtitle: Text('Main Menu: ${stores[index]['mainmenu']}, Capacity: ${stores[index]['capacity']}'),
                 onTap: () {
