@@ -250,6 +250,7 @@ Future<void> joinChat(String email, int chatid) async {
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
+          'email': email,
           'chatid': chatid,
         })
     );

@@ -30,6 +30,7 @@ class _EditChatRoomScreenState extends State<EditChatRoomScreen> {
   late String name;
   late String number;
   late String category;
+  late String address;
   late String? pre_store;
   late String _pre_str;
   bool showList = true;
@@ -115,26 +116,8 @@ class _EditChatRoomScreenState extends State<EditChatRoomScreen> {
                             storeid = list_res[index]['id']!;
                             name = list_res[index]['place_name'];
                             number = list_res[index]['number'];
-                            category = list_res[index]['category'];
+                            address = list_res[index]['address'];
                             _pre_str = "예약 식당: ${name}";
-                            print(storeid);
-                            print(containedDB(storeid));
-                            dynamic cDB = await containedDB(storeid);
-                            print(cDB);
-
-                            if (cDB == false) {
-                              print("SSSSSSSSSSSSSSSSSSS ${storeid}");
-                              addStore(
-                                  storeid,
-                                  name,
-                                  number,
-                                  list_res[index]['address'],
-                                  null,
-                                  "No Info",
-                                  "No Info",
-                                  -1,
-                                  "No Info");
-                            }
                             setState(() {
                               showList = false;
                             });
@@ -197,7 +180,7 @@ class _EditChatRoomScreenState extends State<EditChatRoomScreen> {
                   return;
                 }
                 // if(containedDB(storeid) == false) await addStore(storeid, name, number, address, image, menu, screen, capacity, email)
-                await makeReservation(widget.ChatRoom['id'], storeid, _timeController.text);
+                await makeReservation(widget.ChatRoom['id'], name, number, address, _timeController.text);
                 await updateChat(widget.ChatRoom['id'], _nameController.text, _imageFile?.path, widget.ChatRoom['region'], int.tryParse(_capacity.text)!, _authController.text, _linkController.text);
                 // Store 객체를 업데이트합니다.
 

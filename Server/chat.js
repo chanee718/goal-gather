@@ -125,8 +125,10 @@ router.put('/updatechat', async (req, res) => {
 //특정 유저가 채팅방에 참여
 router.post('/joinchat', async (req, res) => {
     const { email, chatid } = req.body;
+    console.log(email);
+    console.log(chatid);
     try {
-      await db.execute('INSERT INTO users_chats (user_email, chatid) VALUES (?, ?)', [email, chatid]);
+      await db.execute('INSERT INTO users_chats (user_email, chat_id) VALUES (?, ?)', [email, chatid]);
       res.json({});
       console.log('채팅방에 참여하였습니다!');
 
@@ -139,6 +141,8 @@ router.post('/joinchat', async (req, res) => {
 
 router.delete('/getout', async (req, res) => {
     const { email, chatid } = req.body;
+    console.log(email);
+    console.log(chatid);
     try {
         const chatroom = await db.execute('SELECT * FROM users_chats WHERE user_email = ? AND chat_id = ?', [email, chatid]);
         if (chatroom.length === 0) {
