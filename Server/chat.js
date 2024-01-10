@@ -37,8 +37,11 @@ router.get('/findchat', async (req, res) => {
 // 식당을 예약하면 update하자 -> 채팅방의 id와 상점 id, 예약 시간를 받아오자
 // 주소: /chat/reservation
 router.put('/reservation', async (req, res) => {   
+  const {chatid, storeid, time} = req.body;
+  console.log(chatid);
+  console.log(storeid);
+  console.log(time);
     try {
-      const {chatid, storeid, time} = req.body;
       const chatroom = await db.execute('SELECT * FROM chats WHERE id = ?', [chatid]);
       
       if (chatroom.length === 0) {
