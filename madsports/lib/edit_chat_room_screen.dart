@@ -30,6 +30,8 @@ class _EditChatRoomScreenState extends State<EditChatRoomScreen> {
   late String name;
   late String number;
   late String category;
+  late String? pre_store;
+  late String _pre_str;
   bool showList = true;
 
   @override
@@ -39,8 +41,29 @@ class _EditChatRoomScreenState extends State<EditChatRoomScreen> {
     _linkController = TextEditingController(text: widget.ChatRoom['chat_link']);
     _authController = TextEditingController(text: widget.ChatRoom['partici_auth']);
     _timeController = TextEditingController(text: widget.ChatRoom['reserve_time']);
-    _capacity = TextEditingController(text: widget.ChatRoom['capacity']);
-    list_res = listofRestaurant(widget.ChatRoom['region']);
+    _capacity = TextEditingController(text: widget.ChatRoom['capacity'].toString());
+    _pre_str = "예약 장소: ";
+    _imageFile = File(widget.ChatRoom['chat_image']);
+    list_res = Map();
+
+
+    _initializeAsyncData();
+  }
+
+  Future<void> _initializeAsyncData() async {
+    list_res = await listofRestaurant(widget.ChatRoom['id']);
+    if(widget.ChatRoom['reserved_store_id'] == null || widget.ChatRoom['reserved_store_id'] == "") {
+      pre_store = null;
+    } else {
+      dynamic str_inf = await findStore(widget.ChatRoom['reserved_store_id']);
+      pre_store = str_inf['name'];
+      setState(() {
+        _pre_str = "예약 장소: ${pre_store}";
+      });
+    }
+    setState(() {
+
+    });
   }
 
   Future<void> _pickImage() async {
@@ -62,33 +85,62 @@ class _EditChatRoomScreenState extends State<EditChatRoomScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
+            Text(
+              _pre_str
+            ),
             // 검색 필드
             // 검색 결과 리스트
-            showList? ListView.builder(
-              shrinkWrap: true,
-              itemCount: list_res.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(list_res[index]['place_name']),
-                  subtitle: containedDB(list_res[index]['id']!) == false?
-                  Text("address: ${list_res[index]['address']}, category: ${list_res[index]['category']}"):
-                  Text("address: ${list_res[index]['address']}, category: ${list_res[index]['category']}, "),
-                  onTap: () async {
-                    // 선택된 가게 정보로 필드를 채움
-                    storeid = list_res[index]['id']!;
-                    name = list_res[index]['place_name'];
-                    number = list_res[index]['number'];
-                    category = list_res[index]['category'];
-                    if(containedDB(storeid) == false){
-                      addStore(storeid, name, number, list_res[index]['address'], null, "No Info", "No Info", -1, "No Info");
-                    }
-                    setState(() {
-                      showList = false;
-                    });
-                  },
-                );
-              },
-            ): Container(),
+            FutureBuilder(
+                future: listofRestaurant(widget.ChatRoom['id']),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else {
+                    dynamic list_res = snapshot.data;
+                    return showList ? ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: list_res.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(list_res[index]['place_name']),
+                          subtitle: containedDB(list_res[index]['id']!) == false
+                              ?
+                          Text(
+                              "address: ${list_res[index]['address']}, category: ${list_res[index]['category']}")
+                              :
+                          Text(
+                              "address: ${list_res[index]['address']}, category: ${list_res[index]['category']}, "),
+                          onTap: () async {
+                            // 선택된 가게 정보로 필드를 채움
+                            storeid = list_res[index]['id']!;
+                            name = list_res[index]['place_name'];
+                            number = list_res[index]['number'];
+                            category = list_res[index]['category'];
+                            _pre_str = "예약 식당: ${name}";
+
+                            if (containedDB(storeid) == false) {
+                              addStore(
+                                  storeid,
+                                  name,
+                                  number,
+                                  list_res[index]['address'],
+                                  null,
+                                  "No Info",
+                                  "No Info",
+                                  -1,
+                                  "No Info");
+                            }
+                            setState(() {
+                              showList = false;
+                            });
+                          },
+                        );
+                      },
+                    ) : Container();
+                  }
+                },
+            ),
+
             if (_imageFile != null) Image.file(_imageFile!),
             ElevatedButton(
               onPressed: _pickImage,

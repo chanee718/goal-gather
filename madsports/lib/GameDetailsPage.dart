@@ -66,7 +66,7 @@ class _GameDetailsPageState extends State<GameDetailsPage> {
                         children: <Widget>[
                           ListTile(
                             title: Text('Members: ${chatRooms[index]['capacity']}'),
-                            subtitle: Text('Reserved: ${chatRooms[index]['reserve_time'] == '' ? "No" : "Yes"}'),
+                            subtitle: Text('Reserved: ${chatRooms[index]['reserve_time'] == null || chatRooms[index]['reserve_time'] == ''? "No" : "Yes"}'),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,

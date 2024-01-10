@@ -24,35 +24,31 @@ class _InfoChatRoomScreenState extends State<InfoChatRoomScreen> {
   late String? store_num;
 
   @override
-  Future<void> initState() async {
+  void initState() {
     super.initState();
     isJoined = false;
+    store_name = null;
+    store_num = null;
+    _initializeAsyncData();
+  }
+
+  Future<void> _initializeAsyncData() async {
     dynamic list_mem = await getChatMember(widget.ChatRoom['id']);
-    for(int i=0; i<list_mem.length; i++){
-      if(list_mem[i]['user_email'] == widget.email) isJoined = true;
-    }
-    if(widget.ChatRoom['reserved_store_id'] != null){
-      if(widget.ChatRoom['reserved_store_id'] != ""){
-        dynamic store_inf = await findStore(widget.ChatRoom['reserved_store_id']);
-        store_name = store_inf['store_name'];
-        if(store_inf['number'] != null && store_inf['number'] != ""){
-          store_num = store_inf['number'];
-        }
-        else {
-          store_num = null;
-        }
-
-      }
-      else{
-        store_name = null;
-        store_num = null;
+    for (int i = 0; i < list_mem.length; i++) {
+      if (list_mem[i]['user_email'] == widget.email) {
+        isJoined = true;
+        break;
       }
     }
-    else{
-      store_name = null;
-      store_num = null;
+
+    if (widget.ChatRoom['reserved_store_id'] != null && widget.ChatRoom['reserved_store_id'] != "") {
+      dynamic store_inf = await findStore(widget.ChatRoom['reserved_store_id']);
+      store_name = store_inf['store_name'];
+      store_num = store_inf['number'] != null && store_inf['number'] != "" ? store_inf['number'] : null;
     }
 
+    // 상태 업데이트를 위해 setState 호출
+    setState(() {});
   }
 
   @override
@@ -66,7 +62,7 @@ class _InfoChatRoomScreenState extends State<InfoChatRoomScreen> {
           Expanded(
             flex: 4, // 상단 40%
             child: Image.file(
-              widget.ChatRoom['chat_image'], // 채팅방 사진 URL
+              File(widget.ChatRoom['chat_image']), // 채팅방 사진 URL
               fit: BoxFit.cover,
             ),
           ),
@@ -94,16 +90,17 @@ class _InfoChatRoomScreenState extends State<InfoChatRoomScreen> {
             child: Padding(
               padding: EdgeInsets.all(10.0),
               child: ElevatedButton(
-                onPressed: () {
-                  setState(() async {
-                    isJoined = !isJoined;
-                    if(isJoined == true){
-                      await joinChat(widget.email, widget.ChatRoom['id']);
-                    }
-                    else{
-                      await goOutChat(widget.email, widget.ChatRoom['id']);
-                    }
-                    widget.onUpdate();
+                onPressed: () async {
+                  isJoined = !isJoined;
+                  if(isJoined == true){
+                    await joinChat(widget.email, widget.ChatRoom['id']);
+                  }
+                  else{
+                    await goOutChat(widget.email, widget.ChatRoom['id']);
+                  }
+                  widget.onUpdate();
+                  setState(() {
+
                   });
                 },
                 child: Text(isJoined ? "Leave Chat Room" : "Join Chat Room"),
