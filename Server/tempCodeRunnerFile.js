@@ -1,0 +1,1 @@
+onsole.log('MySQL에 연결되었습니다.');
