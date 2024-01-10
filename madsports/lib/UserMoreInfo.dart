@@ -139,14 +139,13 @@ class _MoreUserInfo extends State<MoreUserInfo> {
                   await editUserinfo(widget.email, _nameController.text, _imageFile?.path, _typeController.text);
 
                   // 초기 화면으로 돌아갑니다.
-
-                  await Future.delayed(Duration.zero, () {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => MyApp()),
-                          (Route<dynamic> route) => false,
-                    );
-                  });
+                  print("checkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
+                  // Navigator.pushAndRemoveUntil(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => MyHomePage(title: 'Goal Gather')),
+                  //       (Route<dynamic> route) => false,
+                  // );
+                  Navigator.pop(context);
                 },
                 child: Text('정보 저장'),
               ),

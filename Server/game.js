@@ -47,7 +47,7 @@ router.post('/insert', async (req, res) => {
             const leagueName = leagueMapping[game.strLeague] || game.strLeague;
             console.log(game.idEvent);
             await db.execute('INSERT INTO games (id, home_team, away_team, game_date, league, start_time) VALUES (?, ?, ?, ?, ?, ?)', [game.idEvent, game.idHomeTeam, game.idAwayTeam, gameDateKST, leagueName, gameTimeKST]);
-            
+            res.json({});
         }
     } catch (error) {
         console.error('Error fetching matches:', error.message);
