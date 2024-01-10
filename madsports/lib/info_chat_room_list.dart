@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:madsports/dial_phone_widget.dart';
+import 'package:madsports/edit_chat_room_screen.dart';
 import 'dart:io';
 
 import 'package:madsports/hyperlinkwidget.dart';
@@ -20,15 +21,11 @@ class InfoChatRoomScreen extends StatefulWidget {
 
 class _InfoChatRoomScreenState extends State<InfoChatRoomScreen> {
   late bool isJoined;
-  late String? store_name;
-  late String? store_num;
 
   @override
   void initState() {
     super.initState();
     isJoined = false;
-    store_name = null;
-    store_num = null;
     _initializeAsyncData();
   }
 
@@ -41,12 +38,6 @@ class _InfoChatRoomScreenState extends State<InfoChatRoomScreen> {
       }
     }
 
-    if (widget.ChatRoom['reserved_store_id'] != null && widget.ChatRoom['reserved_store_id'] != "") {
-      dynamic store_inf = await findStore(widget.ChatRoom['reserved_store_id']);
-      store_name = store_inf['store_name'];
-      store_num = store_inf['number'] != null && store_inf['number'] != "" ? store_inf['number'] : null;
-    }
-
     // 상태 업데이트를 위해 setState 호출
     setState(() {});
   }
@@ -56,6 +47,29 @@ class _InfoChatRoomScreenState extends State<InfoChatRoomScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Chat Room Details"),
+        actions: <Widget>[
+          widget.ChatRoom['creator_email'] == widget.email? IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditChatRoomScreen(
+                    ChatRoom: widget.ChatRoom,
+                    onUpdate: () {
+                      setState(() {});
+                    },
+                  ),
+                ),
+              );
+              setState(() {
+
+              });
+              // 버튼
+              // 이 눌렸을 때 수행할 작업
+            },
+          ) : Container(),
+        ],
       ),
       body: Column(
         children: <Widget>[
@@ -79,8 +93,15 @@ class _InfoChatRoomScreenState extends State<InfoChatRoomScreen> {
                   Text("Join Conditions: ${widget.ChatRoom['partici_auth']}", style: TextStyle(fontSize: 16)),
                   HyperlinkWidget(url: widget.ChatRoom['chat_link'], text: "Chat Room Link"),
                   Text("Members: ${widget.ChatRoom['capacity']}", style: TextStyle(fontSize: 16)),
-                  store_name != null? Text("Reserved Store: ${store_name}", style: TextStyle(fontSize: 16)):Container(),
-                  store_name != null && store_num != null ? DialPhoneWidget(phoneNumber: store_num!):Container(),
+                  Text(
+                      widget.ChatRoom['reserved_store_name'] == null ? "예약된 식당: 없음" : "예약된 식당: ${widget.ChatRoom['reserved_store_name']}",
+                      style: TextStyle(fontSize: 16)
+                  ),
+                  Text(
+                      widget.ChatRoom['reserved_address'] == null ? "예약된 식당 주소: 없음" : "예약된 식당 주소: ${widget.ChatRoom['reserved_address']}",
+                      style: TextStyle(fontSize: 16)
+                  ),
+                  widget.ChatRoom['reserved_number'] == null ? Container() : DialPhoneWidget(phoneNumber: widget.ChatRoom['reserved_number'])
                 ],
               ),
             ),
